@@ -48,7 +48,7 @@ void *us_thread(void *args)
     int polling_rate = temp->polling_rate;
     int trig = temp->trig;
     int echo = temp->echo;
-    int *speed = temp->speed;
+    double *speed = temp->speed;
     __us_ready(trig, echo);
     clock_t ini_t, fin_t, d_clock;
     double distance_old, distance = __us_read(trig, echo);
