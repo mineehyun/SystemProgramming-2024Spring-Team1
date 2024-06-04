@@ -12,7 +12,7 @@ int create_socket_server(int port)
         .sin_family = AF_INET,
         .sin_port = port,
     };
-    server_sock = socket(PF_INET, SOCK_STREAM, 0);
+    server_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (server_sock == -1) return -1;
     if (bind(server_sock, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) return -1;
     if (listen(server_sock, 5) == -1) return -1;
@@ -26,7 +26,7 @@ int create_socket_server(int port)
 
 int create_socket_client(char address[], int port)
 {
-    int sock;
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in server_address = 
     {
         .sin_addr.s_addr = inet_addr(address),
