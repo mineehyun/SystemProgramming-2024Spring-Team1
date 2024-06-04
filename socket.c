@@ -13,14 +13,14 @@ int create_socket_server(int port)
         .sin_port = port,
     };
     server_sock = socket(PF_INET, SOCK_STREAM, 0);
-    if (server_sock == -1) return SOCKET_SOCKET_ERRNO;
-    if (bind(server_sock, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) return SOCKET_BIND_ERRNO;
-    if (listen(server_sock, 5) == -1) return SOCKET_LISTEN_ERRNO;
+    if (server_sock == -1) return -1;
+    if (bind(server_sock, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) return -1;
+    if (listen(server_sock, 5) == -1) return -1;
     /* Wait for connection request */
     struct sockaddr_in client_address;
     socklen_t client_address_len = sizeof(client_address);
     client_sock = accept(server_sock, (struct sockaddr *)&client_address, &client_address_len);
-    if (client_sock == -1) return SOCKET_ACCEPT_ERRNO;
+    if (client_sock == -1) return -1;
     return client_sock;
 }
 
@@ -33,6 +33,6 @@ int create_socket_client(char address[], int port)
         .sin_family = AF_INET,
         .sin_port = port,
     };
-    if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) return SOCKET_CONNECT_ERRNO;
+    if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address)) == -1) return -1;
     return sock;
 }
