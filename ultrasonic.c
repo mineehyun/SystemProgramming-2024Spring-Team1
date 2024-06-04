@@ -1,23 +1,23 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
 #include "ultrasonic.h"
 
-int __us_ready(int trig, int echo)
+void __us_ready(int trig, int echo)
 {
-    if (GPIOExport(trig)) return -1;
-    if (GPIOExport(echo)) return -1;
-    if (GPIODirection(trig, GPIO_OUT)) return -1;
-    if (GPIODirection(echo, GPIO_IN)) return -1;
-    return 0;
+    GPIOExport(trig);
+    GPIOExport(echo);
+    GPIODirection(trig, GPIO_OUT);
+    GPIODirection(echo, GPIO_IN);
 }
 
 double __us_read(int trig, int echo)
 {
     clock_t ini_t, fin_t;
     /* Make a pulse */
-    if (GPIOWrite(trig, 1)) return -1;
+    GPIOWrite(trig, 1);
     usleep(10);
-    if (GPIOWrite(trig, 0)) return -1;
+    GPIOWrite(trig, 0);
     /* Recieve pulse */
     while (GPIORead(echo) == 0) ini_t = clock();
     while (GPIORead(echo) == 1) fin_t = clock();
@@ -26,11 +26,10 @@ double __us_read(int trig, int echo)
     return dt * 34300 / 2;
 }
 
-int __us_close(int trig, int echo)
+void __us_close(int trig, int echo)
 {
-    if (GPIOUnexport(trig)) return -1;
-    if (GPIOUnexport(echo)) return -1;
-    return 0;
+    GPIOUnexport(trig);
+    GPIOUnexport(echo);
 }
 
 void __us_thread_finalize(void *args)

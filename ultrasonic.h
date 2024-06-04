@@ -19,7 +19,7 @@ extern void GPIOWrite(int pin, int value);
  * 0 : all GPIO are set properly.
  * Negative : GPIO error.
  */
-int __us_ready(int trig, int echo);
+void __us_ready(int trig, int echo);
 
 /**
  * __us_read(@trig, @echo)
@@ -34,7 +34,7 @@ int __us_ready(int trig, int echo);
  */
 double __us_read(int trig, int echo);
 
-int __us_close(int trig, int echo);
+void __us_close(int trig, int echo);
 
 typedef struct __thread_args_us
 {
