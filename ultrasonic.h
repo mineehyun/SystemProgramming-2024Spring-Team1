@@ -4,11 +4,11 @@
 #include <pthread.h>
 #include "gpio.h"
 
-extern int GPIOExport(int pin_num);
-extern int GPIOUnexport(int pin_num);
-extern int GPIODirection(int pin_num, int direction);
-extern int GPIORead(int pin_num);
-extern int GPIOWrite(int pin_num, int value);
+extern void GPIOExport(int pin);
+extern void GPIOUnexport(int pin);
+extern void GPIODirection(int pin, int dir);
+extern int GPIORead(int pin);
+extern void GPIOWrite(int pin, int value);
 
 /**
  * __us_ready(@trig, @echo)
