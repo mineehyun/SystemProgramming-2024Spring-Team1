@@ -5,6 +5,7 @@
 #define GPIO_UNEXPORT_PATH "/sys/class/gpio/unexport"
 #define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio%d/direction"
 #define GPIO_VALUE_PATH "/sys/class/gpio/gpio%d/value"
+
 #define IN 0
 #define OUT 1
 #define LOW 0

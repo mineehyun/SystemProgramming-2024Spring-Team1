@@ -7,7 +7,7 @@
 #define PWM_PERIOD_PATH "/sys/class/pwm/pwmchip0/pwm%d/period"
 #define PWM_DUTYCYCLE_PATH "/sys/class/pwm/pwmchip0/pwm%d/duty_cycle"
 
-#define DEFAULT_PERIOD 100000
+#define DEFAULT_PERIOD 1000000
 
 #ifndef BUFLEN
 #define BUFLEN 256

@@ -172,7 +172,7 @@ void PWMWriteDutyCycle(int pwm_num, int value)
 
 void PWMWriteRatio(int pwm_num, float ratio)
 {
-    printf("[PWMWriteRatio] Writing ratio %.2f pwm %d\n", ratio, pwm_num);
+    printf("[PWMWriteRatio] Writing ratio %.2f%% pwm %d\n", ratio * 100, pwm_num);
     if (pwm_num != 0 && pwm_num != 1)
     {
         fprintf(stderr, "[PWMWriteRatio] @pwm_num must be 0 or 1\n");
@@ -180,10 +180,10 @@ void PWMWriteRatio(int pwm_num, float ratio)
     }
     if (ratio < 0 || 1 < ratio)
     {
-        fprintf(stderr, "[PWMWriteRatio] @ratio must be between 0 and 11\n");
+        fprintf(stderr, "[PWMWriteRatio] @ratio must be between 0 and 1\n");
         return;
     }
     PWMWritePeriod(pwm_num, DEFAULT_PERIOD);
     PWMWriteDutyCycle(pwm_num, (int)(ratio * DEFAULT_PERIOD));
-    printf("[PWMWriteRatio] Writed ratio %.2f pwm %d\n", ratio, pwm_num);
+    printf("[PWMWriteRatio] Writed ratio %.2f%% pwm %d\n", ratio * 100, pwm_num);
 }
