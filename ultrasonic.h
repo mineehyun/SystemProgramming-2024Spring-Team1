@@ -2,39 +2,6 @@
 #define __ULTRASONIC_H__
 
 #include <pthread.h>
-#include "gpio.h"
-
-extern void GPIOExport(int pin);
-extern void GPIOUnexport(int pin);
-extern void GPIODirection(int pin, int dir);
-extern int GPIORead(int pin);
-extern void GPIOWrite(int pin, int value);
-
-/**
- * __us_ready(@trig, @echo)
- * Export GPIO and set its direction properly.
- * Call once before call `__us_read`.
- * 
- * RETURN
- * 0 : all GPIO are set properly.
- * Negative : GPIO error.
- */
-void __us_ready(int trig, int echo);
-
-/**
- * __us_read(@trig, @echo)
- * Read GPIO from ultrasonic sensor.
- * Assuming @trig and @echo is set properly.
- * May be called repeatedly.
- * Do not call directly in main routine; use `us_thread` instead.
- * 
- * RETURN
- * 측정된 거리(cm).
- * 음수: GPIO 에러.
- */
-double __us_read(int trig, int echo);
-
-void __us_close(int trig, int echo);
 
 typedef struct __thread_args_us
 {
@@ -45,18 +12,27 @@ typedef struct __thread_args_us
 } targs_us;
 
 /**
- * __us_thread_finalize(@args)
- * Callback function called by `us_thread`. 
-*/
-void __us_thread_finalize(void *args);
+ * __us_read(@trig, @echo)
+ * DESCRIPTION
+ *  Read GPIO from ultrasonic sensor.
+ *  Assuming @trig and @echo is set properly.
+ * 
+ * RETURN
+ *  Measured distance(cm); -1 if error.
+ */
+double __us_read(int trig, int echo);
+
+void __us_finalize(void *args);
 
 /**
  * us_thread(@args)
- * Routine that reads value from ultrasonic sensor.
- * The type of @args is to be `struct __thread_args_us`.
- * Get measured speed value via `args->speed`.
- * This function do not return anything.
+ * DESCRIPTION
+ *  Routine that reads value from the ultrasonic sensor.
+ *  The type of @args is to be `struct __thread_args_us`.
+ *  Get measured speed via `args->speed`.
+ *  Note that this function do not return anything.
  */
 void *us_thread(void *args);
+
 
 #endif

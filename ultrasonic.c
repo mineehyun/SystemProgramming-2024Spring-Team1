@@ -1,15 +1,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include "gpio.h"
 #include "ultrasonic.h"
 
-void __us_ready(int trig, int echo)
-{
-    GPIOExport(trig);
-    GPIOExport(echo);
-    GPIODirection(trig, GPIO_OUT);
-    GPIODirection(echo, GPIO_IN);
-}
+extern void GPIOExport(int pin);
+extern void GPIOUnexport(int pin);
+extern void GPIODirection(int pin, int dir);
+extern void GPIOWrite(int pin, int value);
+extern int GPIORead(int pin);
 
 double __us_read(int trig, int echo)
 {
@@ -21,21 +20,16 @@ double __us_read(int trig, int echo)
     /* Recieve pulse */
     while (GPIORead(echo) == 0) ini_t = clock();
     while (GPIORead(echo) == 1) fin_t = clock();
-    /* Calculate delta t */
+    /* Calculate distance */
     double dt = (double)(fin_t - ini_t) / CLOCKS_PER_SEC;
     return dt * 34300 / 2;
 }
 
-void __us_close(int trig, int echo)
-{
-    GPIOUnexport(trig);
-    GPIOUnexport(echo);
-}
-
-void __us_thread_finalize(void *args)
+void __us_finalize(void *args)
 {
     targs_us *temp = (targs_us *)args;
-    __us_close(temp->trig, temp->echo);
+    GPIOUnexport(temp->trig);
+    GPIOUnexport(temp->echo);
     free(temp->tid);
     free(temp->speed);
     free(temp);
@@ -44,23 +38,24 @@ void __us_thread_finalize(void *args)
 void *us_thread(void *args)
 {
     targs_us *temp = (targs_us *)args;
-    int polling_rate = temp->polling_rate;
-    int trig = temp->trig;
-    int echo = temp->echo;
-    double *speed = temp->speed;
-    __us_ready(trig, echo);
-    clock_t ini_t, fin_t, d_clock;
-    double distance_old, distance = __us_read(trig, echo);
+    /* Init GPIO */
+    GPIOExport(temp->trig);
+    GPIOExport(temp->echo);
+    GPIODirection(temp->trig, OUT);
+    GPIODirection(temp->echo, IN);
+    /* Start */
+    clock_t ini_t, fin_t, dt;
+    double distance_old, distance = 0;
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-    pthread_cleanup_push(__us_thread_finalize, args);
+    pthread_cleanup_push(__us_finalize, args);
     while (1)
     {
         ini_t = clock();
         distance_old = distance;
-        d_clock = CLOCKS_PER_SEC / polling_rate;
-        while (fin_t > ini_t + d_clock) fin_t = clock();
-        distance = __us_read(trig, echo);
-        *speed = (distance_old - distance) / ((fin_t - ini_t) / CLOCKS_PER_SEC);
+        dt = CLOCKS_PER_SEC / temp->polling_rate;
+        while (fin_t > ini_t + dt) fin_t = clock();
+        distance = __us_read(temp->trig, temp->echo);
+        *temp->speed = (distance_old - distance) / ((fin_t - ini_t) / CLOCKS_PER_SEC);
     }
     pthread_cleanup_pop(0);
 }
