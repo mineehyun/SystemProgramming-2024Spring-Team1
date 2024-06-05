@@ -9,26 +9,27 @@
 #define SPI_BITS_PER_WORD 8
 
 /**
- * spi_init()
+ * @brief
+ * Open SPI device and initialize it.
+ * Device must be closed.
  * 
- * DESCRIPTION
- *  Open SPI device and initialize it.
- *  Must close fd returned.
- * 
- * RETURN
- *  SPI file descriptor. -1 if error.
+ * @return
+ * SPI file descriptor. -1 if error.
 */
 int spi_init();
 
 /**
- * spi_transfer(@tx)
+ * @brief
+ * Send a byte of data to SPI device,
+ * and receive a byte of data from SPI device.
  * 
- * DESCRIPTION
- *  Send a byte of data @tx to SPI device,
- *  and receive a byte of data `rx` from SPI device.
+ * @param spi_fd
+ * SPI device file descriptor.
+ * @param tx
+ * A byte of data to be sent to SPI device.
  * 
- * RETURN
- *  A byte of data received. 0 if error.
+ * @return
+ * A byte of data received. 0 if error.
 */
 uint8_t spi_transfer(int spi_fd, uint8_t tx);
 

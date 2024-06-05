@@ -12,27 +12,27 @@ typedef struct __thread_args_us
 } targs_us;
 
 /**
- * __us_read(@trig, @echo)
- * DESCRIPTION
- *  Read GPIO from ultrasonic sensor.
- *  Assuming @trig and @echo is set properly.
+ * @brief
+ * Read GPIO from ultrasonic sensor.
  * 
- * RETURN
- *  Measured distance(cm); -1 if error.
+ * @return
+ * Measured distance(cm); -1 if error.
  */
 double __us_read(int trig, int echo);
 
 void __us_finalize(void *args);
 
 /**
- * us_thread(@args)
- * DESCRIPTION
- *  Routine that reads value from the ultrasonic sensor.
- *  The type of @args is to be `struct __thread_args_us`.
- *  Get measured speed via `args->speed`.
- *  Note that this function do not return anything.
+ * @brief
+ * Routine that reads value from the ultrasonic sensor.
+ * Access measured speed via `args->speed`.
+ * 
+ * @param args
+ * Use type `struct __thread_args_us *`.
+ * 
+ * @return
+ * Nothing.
  */
 void *us_thread(void *args);
-
 
 #endif
