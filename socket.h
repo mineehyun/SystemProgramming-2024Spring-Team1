@@ -4,26 +4,26 @@
 #define DEFAULT_PORT 8888
 
 /**
- * create_socket_server(@port)
- * DESCRIPTION
- *  Create a socket as server and wait for connection.
- *  Socket must be closed by `close`.
- *  Note that server socket will be closed before function return.
- *  So cannot use same server socket to accept two or more clients.
- * 
- * RETURN
- *  Return the connected socket. -1 if error.
+ * @brief
+ * Create a socket as server and wait for connection.
+ * Socket must be closed.
+ * @param port
+ * 포트지뭐긴뭐야
+ * @return
+ * Return the connected client socket. -1 if error.
  */
 int create_socket_server(int port);
 
 /**
- * create_socket_client(@address, @port)
- * DESCRIPTION
- *  Create a socket as client and request connection to @address @port.
- *  Socket must be closed by `close`.
- * 
- * RETURN
- *  Return the connected socket. -1 if error.
+ * @brief
+ * Create a socket as client and request connection.
+ * Socket must be closed.
+ * @param address
+ * String type IPv4 address
+ * @param port
+ * 포트지뭐긴뭐야
+ * @return
+ * Return the connected socket. -1 if error.
  */
 int create_socket_client(char address[], int port);
 
