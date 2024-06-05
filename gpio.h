@@ -5,10 +5,10 @@
 #define GPIO_UNEXPORT_PATH "/sys/class/gpio/unexport"
 #define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio%d/direction"
 #define GPIO_VALUE_PATH "/sys/class/gpio/gpio%d/value"
-#define GPIO_IN 0
-#define GPIO_OUT 1
-#define GPIO_LOW 0
-#define GPIO_HIGH 1
+#define IN 0
+#define OUT 1
+#define LOW 0
+#define HIGH 1
 
 #ifndef BUFLEN
 #define BUFLEN 256
@@ -17,7 +17,7 @@
 void GPIOExport(int pin);
 void GPIOUnexport(int pin);
 void GPIODirection(int pin, int dir);
-int GPIORead(int pin);
 void GPIOWrite(int pin, int value);
+int GPIORead(int pin);
 
 #endif
