@@ -23,21 +23,21 @@ void GPIOExport(int pin)
 
 void GPIOUnexport(int pin)
 {
-    printf("[GPIOExport] Unexporting pin %d\n", pin);
+    printf("[GPIOUnexport] Unexporting pin %d\n", pin);
     int fd = open(GPIO_UNEXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[GPIOExport] File open failed");
+        perror("[GPIOUnexport] File open failed");
         return;
     }
     if (dprintf(fd, "%d", pin) == -1)
     {
-        perror("[GPIOExport] Write failed");
+        perror("[GPIOUnexport] Write failed");
         close(fd);
         return;
     }
     close(fd);
-    printf("[GPIOExport] Unexported pin %d\n", pin);
+    printf("[GPIOUnexport] Unexported pin %d\n", pin);
 }
 
 void GPIODirection(int pin, int dir)
