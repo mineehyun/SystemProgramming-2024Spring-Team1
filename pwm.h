@@ -13,12 +13,12 @@
 #define BUFLEN 256
 #endif
 
-int PWMExport(int pwm_num);
-int PWMUnexport(int pwm_num);
-int PWMEnable(int pwm_num);
-int PWMDisable(int pwm_num);
-int PWMWritePeriod(int pwm_num, int value);
-int PWMWriteDutyCycle(int pwm_num, int value);
-int PWMWriteDutyCycleByRatio(int pwm_num, float ratio);
+void PWMExport(int pwm_num);
+void PWMUnexport(int pwm_num);
+void PWMEnable(int pwm_num);
+void PWMDisable(int pwm_num);
+void PWMWritePeriod(int pwm_num, int value);
+void PWMWriteDutyCycle(int pwm_num, int value);
+void PWMWriteRatio(int pwm_num, float ratio);
 
 #endif
