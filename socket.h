@@ -12,7 +12,7 @@
  *  So cannot use same server socket to accept two or more clients.
  * 
  * RETURN
- *  Return the connected socket. Negative means error.
+ *  Return the connected socket. -1 if error.
  */
 int create_socket_server(int port);
 
@@ -23,7 +23,7 @@ int create_socket_server(int port);
  *  Socket must be closed by `close`.
  * 
  * RETURN
- *  Return the connected socket. Negative means error.
+ *  Return the connected socket. -1 if error.
  */
 int create_socket_client(char address[], int port);
 
