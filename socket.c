@@ -46,7 +46,6 @@ int create_socket_server(int port)
 
 int create_socket_client(char address[], int port)
 {
-    printf("[Client] Creating socket address %s port %d\n", address, port);
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in server_address = 
     {
@@ -60,6 +59,5 @@ int create_socket_client(char address[], int port)
         close(sock);
         return -1;
     }
-    printf("[Client] Created socket address %s port %d\n", address, port);
     return sock;
 }

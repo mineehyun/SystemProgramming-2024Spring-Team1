@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include "gpio.h"
 
@@ -7,11 +9,11 @@ void GPIOExport(int pin)
     int fd = open(GPIO_EXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[GPIOExport] open: ");
+        perror("[GPIOExport] open");
     }
     else if (dprintf(fd, "%d", pin) == -1)
     {
-        perror("[GPIOExport] dprintf: ");
+        perror("[GPIOExport] dprintf");
     }
     close(fd);
 }
@@ -21,11 +23,11 @@ void GPIOUnexport(int pin)
     int fd = open(GPIO_UNEXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[GPIOUnexport] open: ");
+        perror("[GPIOUnexport] open");
     }
     else if (dprintf(fd, "%d", pin) == -1)
     {
-        perror("[GPIOUnexport] dprintf: ");
+        perror("[GPIOUnexport] dprintf");
     }
     close(fd);
 }
@@ -35,59 +37,59 @@ void GPIODirection(int pin, gpio_direction direction)
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_DIRECTION_PATH, pin) == -1)
     {
-        perror("[GPIODirection] snprintf: ");
+        perror("[GPIODirection] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     char *dir_strs[2] = { "in", "out" };
     if (fd == -1)
     {
-        perror("[GPIODirection] open: ");
+        perror("[GPIODirection] open");
     }
     else if (dprintf(fd, dir_strs[direction]) == -1)
     {
-        perror("[GPIODirection] dprintf: ");
+        perror("[GPIODirection] dprintf");
     }
     close(fd);
 }
 
-void GPIOWrite(int pin, gpio_status status)
+void GPIOWrite(int pin, gpio_value status)
 {
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin) == -1)
     {
-        perror("[GPIOWrite] snprintf: ");
+        perror("[GPIOWrite] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[GPIOWrite] open: ");
+        perror("[GPIOWrite] open");
     }
     else if (dprintf(fd, "%d", status) == -1)
     {
-        perror("[GPIOWrite] dprintf: ");
+        perror("[GPIOWrite] dprintf");
     }
     close(fd);
 }
 
-gpio_status GPIORead(int pin)
+gpio_value GPIORead(int pin)
 {
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin) == -1)
     {
-        perror("[GPIORead] snprintf: ");
+        perror("[GPIORead] snprintf");
         return -1;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[GPIORead] open: ");
+        perror("[GPIORead] open");
         return -1;
     }
     if (read(fd, buffer, 3) == -1)
     {
-        perror("[GPIORead] read: ");
+        perror("[GPIORead] read");
         close(fd);
         return -1;
     }

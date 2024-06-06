@@ -7,11 +7,11 @@ void PWMExport(int pwm_num)
     int fd = open(PWM_EXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMExport] open: ");
+        perror("[PWMExport] open");
     }
     else if (dprintf(fd, "%d", pwm_num) == -1)
     {
-        perror("[PWMExport] dprintf: ");
+        perror("[PWMExport] dprintf");
     }
     close(fd);
 }
@@ -21,11 +21,11 @@ void PWMUnexport(int pwm_num)
     int fd = open(PWM_UNEXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMUnexport] open: ");
+        perror("[PWMUnexport] open");
     }
     else if (dprintf(fd, "%d", pwm_num) == -1)
     {
-        perror("[PWMUnexport] dprintf: ");
+        perror("[PWMUnexport] dprintf");
     }
     close(fd);
 }
@@ -35,17 +35,17 @@ void PWMEnable(int pwm_num)
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num) == -1)
     {
-        perror("[PWMEnable] snprintf: ");
+        perror("[PWMEnable] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMEnable] open: ");
+        perror("[PWMEnable] open");
     }
     else if (dprintf(fd, "1") == -1)
     {
-        perror("[PWMEnable] dprintf: ");
+        perror("[PWMEnable] dprintf");
     }
     close(fd);
 }
@@ -55,17 +55,17 @@ void PWMDisable(int pwm_num)
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num) == -1)
     {
-        perror("[PWMDisable] snprintf: ");
+        perror("[PWMDisable] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMDisable] open: ");
+        perror("[PWMDisable] open");
     }
     else if (dprintf(fd, "0") == -1)
     {
-        perror("[PWMDisable] dprintf: ");
+        perror("[PWMDisable] dprintf");
     }
     close(fd);
 }
@@ -75,17 +75,17 @@ void PWMWritePeriod(int pwm_num, int value)
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, PWM_PERIOD_PATH, pwm_num) == -1)
     {
-        perror("[PWMPeriod] snprintf: ");
+        perror("[PWMPeriod] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMPeriod] open: ");
+        perror("[PWMPeriod] open");
     }
     else if (dprintf(fd, "%d", value) == -1)
     {
-        perror("[PWMPeriod] dprintf: ");
+        perror("[PWMPeriod] dprintf");
     }
     close(fd);
 }
@@ -95,17 +95,17 @@ void PWMWriteDutyCycle(int pwm_num, int value)
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, PWM_DUTYCYCLE_PATH, pwm_num) == -1)
     {
-        perror("[PWMDutyCycle] snprintf: ");
+        perror("[PWMDutyCycle] snprintf");
         return;
     }
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMDutyCycle] open: ");
+        perror("[PWMDutyCycle] open");
     }
     else if (dprintf(fd, "%d", value) == -1)
     {
-        perror("[PWMDutyCycle] dprintf: ");
+        perror("[PWMDutyCycle] dprintf");
     }
     close(fd);
 }

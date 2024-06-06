@@ -12,11 +12,11 @@ typedef enum __gpio_direction
     OUT = 1,
 } gpio_direction;
 
-typedef enum __gpio_status
+typedef enum __gpio_value
 {
     LOW = 0,
     HIGH = 1,
-} gpio_status;
+} gpio_value;
 
 #ifndef BUFLEN
 #define BUFLEN 256
@@ -25,7 +25,7 @@ typedef enum __gpio_status
 void GPIOExport(int pin);
 void GPIOUnexport(int pin);
 void GPIODirection(int pin, gpio_direction direction);
-void GPIOWrite(int pin, gpio_status status);
-gpio_status GPIORead(int pin);
+void GPIOWrite(int pin, gpio_value status);
+gpio_value GPIORead(int pin);
 
 #endif

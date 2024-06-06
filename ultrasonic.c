@@ -7,8 +7,8 @@
 extern void GPIOExport(int pin);
 extern void GPIOUnexport(int pin);
 extern void GPIODirection(int pin, gpio_direction direction);
-extern void GPIOWrite(int pin, gpio_status status);
-extern gpio_status GPIORead(int pin);
+extern void GPIOWrite(int pin, gpio_value status);
+extern gpio_value GPIORead(int pin);
 
 double __us_read(int trig, int echo)
 {
