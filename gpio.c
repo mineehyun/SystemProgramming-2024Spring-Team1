@@ -30,7 +30,7 @@ void GPIOUnexport(int pin)
     close(fd);
 }
 
-void GPIODirection(int pin, int dir)
+void GPIODirection(int pin, gpio_direction direction)
 {
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_DIRECTION_PATH, pin) == -1)
@@ -44,14 +44,14 @@ void GPIODirection(int pin, int dir)
     {
         perror("[GPIODirection] open: ");
     }
-    else if (dprintf(fd, dir_strs[dir]) == -1)
+    else if (dprintf(fd, dir_strs[direction]) == -1)
     {
         perror("[GPIODirection] dprintf: ");
     }
     close(fd);
 }
 
-void GPIOWrite(int pin, int value)
+void GPIOWrite(int pin, gpio_status status)
 {
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin) == -1)
@@ -64,14 +64,14 @@ void GPIOWrite(int pin, int value)
     {
         perror("[GPIOWrite] open: ");
     }
-    else if (dprintf(fd, "%d", value) == -1)
+    else if (dprintf(fd, "%d", status) == -1)
     {
         perror("[GPIOWrite] dprintf: ");
     }
     close(fd);
 }
 
-int GPIORead(int pin)
+gpio_status GPIORead(int pin)
 {
     char buffer[BUFLEN];
     if (snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin) == -1)

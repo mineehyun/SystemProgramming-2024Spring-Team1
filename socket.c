@@ -6,7 +6,6 @@
 
 int create_socket_server(int port)
 {
-    printf("[Server] Creating socket port %d\n", port);
     int server_sock, client_sock;
     struct sockaddr_in server_address = 
     {
@@ -42,7 +41,6 @@ int create_socket_server(int port)
         return -1;
     }
     close(server_sock);
-    printf("[Server] Created socket port %d\n", port);
     return client_sock;
 }
 

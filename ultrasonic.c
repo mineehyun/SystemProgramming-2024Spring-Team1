@@ -6,9 +6,9 @@
 
 extern void GPIOExport(int pin);
 extern void GPIOUnexport(int pin);
-extern void GPIODirection(int pin, int dir);
-extern void GPIOWrite(int pin, int value);
-extern int GPIORead(int pin);
+extern void GPIODirection(int pin, gpio_direction direction);
+extern void GPIOWrite(int pin, gpio_status status);
+extern gpio_status GPIORead(int pin);
 
 double __us_read(int trig, int echo)
 {
@@ -18,8 +18,8 @@ double __us_read(int trig, int echo)
     usleep(10);
     GPIOWrite(trig, 0);
     /* Recieve pulse */
-    while (GPIORead(echo) == 0) ini_t = clock();
-    while (GPIORead(echo) == 1) fin_t = clock();
+    while (GPIORead(echo) == LOW) ini_t = clock();
+    while (GPIORead(echo) == HIGH) fin_t = clock();
     /* Calculate distance */
     double dt = (double)(fin_t - ini_t) / CLOCKS_PER_SEC;
     return dt * 34300 / 2;

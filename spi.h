@@ -15,7 +15,7 @@
  * 
  * @return
  * SPI file descriptor. -1 if error.
-*/
+ */
 int spi_init();
 
 /**
@@ -30,7 +30,7 @@ int spi_init();
  * 
  * @return
  * A byte of data received. 0 if error.
-*/
+ */
 uint8_t spi_transfer(int spi_fd, uint8_t tx);
 
 #endif

@@ -6,10 +6,8 @@
 /* GPIO pin definition */
 #define CE 6
 #define CSN 10
-/* TX(send) RX(receive) mode definition */
-#define TX_MODE 0
-#define RX_MODE 1
-/* Payload width configuration */
+/* User define configurations */
+#define ADDR_LENGTH 5
 #define PAYLOAD_WIDTH 32
 /* SPI command definition */
 #define R_REGISTER 0b00000000
@@ -49,6 +47,12 @@ void __nrf_init(int spi_fd, uint8_t mode);
 
 /**
  * @brief
+ * Set TX/RX address to `addr`
+ */
+void __nrf_addr(int spi_fd, uint8_t addr[]);
+
+/**
+ * @brief
  * Send up to 32 bytes of datas through nRF24L01.
  * 
  * @param spi_fd
@@ -58,7 +62,7 @@ void __nrf_init(int spi_fd, uint8_t mode);
  * @param data
  * Data buffer.
  */
-void __nrf_send(int spi_fd, uint8_t addr[], uint8_t data[], int length);
+void __nrf_send(int spi_fd, uint8_t data[], int length);
 
 /**
  * @brief
@@ -71,7 +75,8 @@ void __nrf_send(int spi_fd, uint8_t addr[], uint8_t data[], int length);
  * @param mode
  * Data buffer.
  */
-void __nrf_receive(int spi_fd, uint8_t addr[], uint8_t data[], int length);
+void __nrf_receive(int spi_fd, uint8_t data[], int length);
 
+void __nrf_shutdown(int spi_fd);
 
 #endif

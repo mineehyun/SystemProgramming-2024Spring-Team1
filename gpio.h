@@ -6,10 +6,17 @@
 #define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio%d/direction"
 #define GPIO_VALUE_PATH "/sys/class/gpio/gpio%d/value"
 
-#define IN 0
-#define OUT 1
-#define LOW 0
-#define HIGH 1
+typedef enum __gpio_direction
+{
+    IN = 0,
+    OUT = 1,
+} gpio_direction;
+
+typedef enum __gpio_status
+{
+    LOW = 0,
+    HIGH = 1,
+} gpio_status;
 
 #ifndef BUFLEN
 #define BUFLEN 256
@@ -17,8 +24,8 @@
 
 void GPIOExport(int pin);
 void GPIOUnexport(int pin);
-void GPIODirection(int pin, int dir);
-void GPIOWrite(int pin, int value);
-int GPIORead(int pin);
+void GPIODirection(int pin, gpio_direction direction);
+void GPIOWrite(int pin, gpio_status status);
+gpio_status GPIORead(int pin);
 
 #endif
