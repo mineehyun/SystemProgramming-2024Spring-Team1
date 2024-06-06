@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 /* GPIO pin definition */
-#define CE 6
-#define CSN 10
+#define CE 25
+#define CSN 8
 /* User define configurations */
 #define ADDR_LENGTH 5
 #define PAYLOAD_WIDTH 32
