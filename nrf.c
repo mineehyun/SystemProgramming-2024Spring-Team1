@@ -47,7 +47,7 @@ void __nrf_set_mode_rx(int spi_fd)
     SPI_OFF;
 }
 
-void __nrf_addr(int spi_fd, uint8_t addr[])
+void __nrf_tx_addr(int spi_fd, uint8_t addr[])
 {
     SPI_ON;
     spi_transfer(spi_fd, W_REGISTER | TX_ADDR);
@@ -55,6 +55,12 @@ void __nrf_addr(int spi_fd, uint8_t addr[])
     {
         spi_transfer(spi_fd, addr[i]);
     }
+    SPI_OFF;
+}
+
+void __nrf_rx_addr(int spi_fd, uint8_t addr[])
+{
+    SPI_ON;
     spi_transfer(spi_fd, W_REGISTER | RX_ADDR_P0);
     for (int i = 0; i < ADDR_LENGTH; i++)
     {

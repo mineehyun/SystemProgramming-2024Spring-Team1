@@ -47,9 +47,15 @@ void __nrf_init(int spi_fd, uint8_t mode);
 
 /**
  * @brief
- * Set TX/RX address to `addr`
+ * Set TX address to `addr`
  */
-void __nrf_addr(int spi_fd, uint8_t addr[]);
+void __nrf_tx_addr(int spi_fd, uint8_t addr[]);
+
+/**
+ * @brief
+ * Set RX address to `addr`
+ */
+void __nrf_rx_addr(int spi_fd, uint8_t addr[]);
 
 /**
  * @brief
