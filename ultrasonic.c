@@ -33,7 +33,6 @@ void __us_thread_finalize(void *args)
     struct us_thread_args *__args = (struct us_thread_args *)args;
     gpio_unexport(__args->trig);
     gpio_unexport(__args->echo);
-    free(__args->tid);
     free(__args);
 }
 
