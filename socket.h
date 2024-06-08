@@ -13,7 +13,7 @@
  * @returns
  * Client socket fd. -1 if error.
  */
-int socket_server(uint8_t port);
+int socket_server(uint32_t port);
 
 /**
  * Create a socket as client and request connection.
@@ -26,6 +26,6 @@ int socket_server(uint8_t port);
  * @returns
  * Return the connected socket. -1 if error.
  */
-int socket_client(char address[], uint8_t port);
+int socket_client(char address[], uint32_t port);
 
 #endif
