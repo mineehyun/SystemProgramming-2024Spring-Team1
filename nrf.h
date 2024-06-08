@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 /* GPIO pin definition */
-#define CE 25
+#define CE 27
 #define CSN 22
 /* Default configs */
 #define ADDR_LENGTH 5
