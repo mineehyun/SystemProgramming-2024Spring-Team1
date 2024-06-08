@@ -226,7 +226,7 @@ int __nrf_receive(struct nrf_args *nrf)
 void __nrf_finalize(struct nrf_args *nrf)
 {
     /* Check problem */
-    __nrf_dump_registers(nrf);
+    // __nrf_dump_registers(nrf);
     /* Powering down */
     __nrf_write_reg(nrf, CONFIG, 0);
     /* SPI OFF */
