@@ -14,7 +14,6 @@ struct weatherResult {
 };
 
 struct weatherResult* weatherresult;
-
 struct weatherResult* main() {
   pthread_t p_thread[3];
   int thr_id;
@@ -51,6 +50,6 @@ struct weatherResult* main() {
   sleep(180);
   // event function들 return값 정리 -> 날씨 저장
   }
-
+ 
   return weatherresult;
 }
