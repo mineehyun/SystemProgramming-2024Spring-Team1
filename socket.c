@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include "socket.h"
 
-int socket_server(uint8_t port)
+int socket_server(uint32_t port)
 {
     /* Server socket */
     struct sockaddr_in server_address = {0};
@@ -44,7 +44,7 @@ int socket_server(uint8_t port)
     return client_sock;
 }
 
-int socket_client(char address[], uint8_t port)
+int socket_client(char address[], uint32_t port)
 {
     struct sockaddr_in server_address = {0};
     server_address.sin_addr.s_addr = inet_addr(address);
