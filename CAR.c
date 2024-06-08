@@ -35,9 +35,9 @@
 #define VALUE_MAX 40
 #define DIRECTION_MAX 40
 
-/* socket 파일에 있음
-#define DEFAULT_PORT 8888
-*/
+// socket 파일에 있음
+//#define DEFAULT_PORT 8888
+
 
 void setPinConfig(int pwm_num, int INA, int INB)
 {
@@ -111,10 +111,9 @@ void *emergency_signal_thread(void *arg)
 
   enum gpio_value button_state;
 
-  /*
-  문제 상황: 버튼이 눌리지도 않았는데 서버 소켓에 메세지 감
-  버튼 못읽음
-  */
+  
+  //문제 상황: 버튼이 눌리지도 않았는데 서버 소켓에 메세지 감 & 버튼 못읽음
+  
 
   while (1)
   {
