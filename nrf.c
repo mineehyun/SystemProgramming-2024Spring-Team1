@@ -109,7 +109,7 @@ int __nrf_send(struct nrf_args *nrf)
     }
     /* Flush TX FIFO */
     SPI_ON();
-    if (spi_transfer(nrf, FLUSH_TX, NULL) == -1)
+    if (spi_transfer(nrf->spi_fd, FLUSH_TX, NULL) == -1)
     {
         __nrf_finalize(nrf);
         perror("[__nrf_send] FLUSH_TX");
@@ -133,9 +133,9 @@ int __nrf_send(struct nrf_args *nrf)
     }
     SPI_OFF();
     /* Send! */
-    GPIOWrite(CE, HIGH);
+    gpio_write(CE, HIGH);
     usleep(10);
-    GPIOWrite(CE, LOW);
+    gpio_write(CE, LOW);
     usleep(1000);
     /* Test send complete */
     uint8_t status;
@@ -160,7 +160,7 @@ int __nrf_send(struct nrf_args *nrf)
     SPI_OFF();
 }
 
-int __nrf_receive(struct nrf_args *nrf, uint8_t timeout)
+int __nrf_receive(struct nrf_args *nrf)
 {
     /* Test mode */
     if (nrf->mode == RX_MODE)
@@ -170,7 +170,7 @@ int __nrf_receive(struct nrf_args *nrf, uint8_t timeout)
     }
     /* Flush RX FIFO */
     SPI_ON();
-    if (spi_transfer(nrf, FLUSH_RX, NULL) == -1)
+    if (spi_transfer(nrf->spi_fd, FLUSH_RX, NULL) == -1)
     {
         __nrf_finalize(nrf);
         perror("[__nrf_receive] FLUSH_RX");
@@ -178,7 +178,7 @@ int __nrf_receive(struct nrf_args *nrf, uint8_t timeout)
     }
     SPI_OFF();
     /* RX mode on */
-    GPIOWrite(CE, HIGH);
+    gpio_write(CE, HIGH);
     usleep(1000);
     /* Wait for data */
     uint8_t status;
@@ -201,10 +201,10 @@ int __nrf_receive(struct nrf_args *nrf, uint8_t timeout)
         return -1;
     }
     SPI_OFF();
-    GPIOWrite(CE, LOW);
+    gpio_write(CE, LOW);
     /* Download RX FIFO */
     SPI_ON();
-    if (spi_transfer(nrf, R_RX_PAYLOAD, NULL) == -1)
+    if (spi_transfer(nrf->spi_fd, R_RX_PAYLOAD, NULL) == -1)
     {
         __nrf_finalize(nrf);
         perror("[__nrf_receive] R_RX_PAYLOAD");
@@ -233,8 +233,8 @@ void __nrf_finalize(struct nrf_args *nrf)
     gpio_write(CSN, HIGH);
     /* Wait for powering down */
     usleep(1000);
-    GPIOUnexport(CE);
-    GPIOUnexport(CSN);
+    gpio_unexport(CE);
+    gpio_unexport(CSN);
 }
 
 void __nrf_dump_registers(struct nrf_args *nrf)

@@ -63,7 +63,7 @@ int gpio_direction(int pin, enum gpio_direction direction)
 int gpio_write(int pin, enum gpio_value value)
 {
     char buffer[BUFLEN];
-    snprintf(buffer, BUFLEN, GPIO_DIRECTION_PATH, pin);
+    snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {

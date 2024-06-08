@@ -6,7 +6,7 @@
 
 /* GPIO pin definition */
 #define CE 25
-#define CSN 8
+#define CSN 22
 /* Default configs */
 #define ADDR_LENGTH 5
 #define PAYLOAD_WIDTH 32
