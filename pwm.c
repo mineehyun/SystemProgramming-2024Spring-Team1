@@ -3,7 +3,7 @@
 #include <fcntl.h>
 #include "pwm.h"
 
-int pwm_export(enum pwm_num pwm_num)
+int pwm_export(pwm_num pwm_num)
 {
     int fd = open(PWM_EXPORT_PATH, O_WRONLY);
     if (fd == -1)
@@ -21,7 +21,7 @@ int pwm_export(enum pwm_num pwm_num)
     return 0;
 }
 
-int pwm_unexport(enum pwm_num pwm_num)
+int pwm_unexport(pwm_num pwm_num)
 {
     int fd = open(PWM_UNEXPORT_PATH, O_WRONLY);
     if (fd == -1)
@@ -39,7 +39,7 @@ int pwm_unexport(enum pwm_num pwm_num)
     return 0;
 }
 
-int pwm_enable(enum pwm_num pwm_num)
+int pwm_enable(pwm_num pwm_num)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num);
@@ -59,7 +59,7 @@ int pwm_enable(enum pwm_num pwm_num)
     return 0;
 }
 
-int pwm_disable(enum pwm_num pwm_num)
+int pwm_disable(pwm_num pwm_num)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num);
@@ -79,7 +79,7 @@ int pwm_disable(enum pwm_num pwm_num)
     return 0;
 }
 
-int pwm_write_period(enum pwm_num pwm_num, uint32_t period)
+int pwm_write_period(pwm_num pwm_num, uint32_t period)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, PWM_PERIOD_PATH, pwm_num);
@@ -99,7 +99,7 @@ int pwm_write_period(enum pwm_num pwm_num, uint32_t period)
     return 0;
 }
 
-int pwm_write_duty_cycle(enum pwm_num pwm_num, uint32_t duty_cycle)
+int pwm_write_duty_cycle(pwm_num pwm_num, uint32_t duty_cycle)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, PWM_DUTY_CYCLE_PATH, pwm_num);
@@ -119,7 +119,7 @@ int pwm_write_duty_cycle(enum pwm_num pwm_num, uint32_t duty_cycle)
     return 0;
 }
 
-int pwm_ratio(enum pwm_num pwm_num, float ratio)
+int pwm_ratio(pwm_num pwm_num, float ratio)
 {
     if (ratio < 0 || 1 < ratio)
     {

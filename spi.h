@@ -10,7 +10,7 @@
 
 /**
  * Open SPI device and initialize it.
- * 
+ *
  * @returns
  * SPI fd. -1 if error.
  */
@@ -18,14 +18,14 @@ int spi_init();
 
 /**
  * Through SPI protocol, send a byte of data `tx` and receive a byte of data via `*rx`.
- * 
+ *
  * @param spi_fd
  * SPI device file descriptor.
  * @param tx
  * 보낼거
  * @param rx
  * 받는곳
- * 
+ *
  * @returns
  * 0 if success, -1 if error.
  */

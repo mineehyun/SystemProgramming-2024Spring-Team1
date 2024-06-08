@@ -11,7 +11,7 @@
 #define ADDR_LENGTH 5
 #define PAYLOAD_WIDTH 32
 /* SPI command definition */
-enum nrf_command
+typedef enum
 {
     R_REGISTER = 0b00000000, // LSB 5 bits: register
     W_REGISTER = 0b00100000, // LSB 5 bits: register
@@ -24,9 +24,9 @@ enum nrf_command
     R_RX_PL_WID = 0b01100000,
     W_ACK_PAYLOAD = 0b10101000, // LSB 3 bits: pipe number
     NOP = 0b11111111,
-};
+} nrf_command;
 /* Registers definition */
-enum nrf_register
+typedef enum
 {
     CONFIG = 0x00,
     EN_AA = 0x01,
@@ -54,16 +54,16 @@ enum nrf_register
     FIFO_STATUS = 0x17,
     DYNPD = 0x1c,
     FEATURE = 0x1d,
-};
+} nrf_register;
 /* STATUS register condition check bit masks */
 #define RX_DR 1 << 6 // this bit means receive done
 #define TX_DS 1 << 5 // this bit means send done
 /* Modes */
-enum nrf_mode
+typedef enum
 {
     TX_MODE = 0,
     RX_MODE = 1,
-};
+} nrf_mode;
 /* CSN pin setting macro; must be used in a pair */
 #define SPI_ON() \
     do           \
@@ -74,13 +74,13 @@ enum nrf_mode
     }                      \
     while (0)
 
-struct nrf_args
+typedef struct
 {
     int spi_fd;
-    enum nrf_mode mode;
+    nrf_mode mode;
     uint8_t address[ADDR_LENGTH];
     uint8_t data[PAYLOAD_WIDTH];
-};
+} nrf_args;
 
 /**
  * Write single `byte` to `reg`. Do not manipulate CSN pin.
@@ -88,7 +88,7 @@ struct nrf_args
  * @returns
  * 0 if success, -1 if error.
  */
-int __nrf_write_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t byte);
+int __nrf_write_reg(nrf_args *nrf, nrf_register reg, uint8_t byte);
 
 /**
  * Read single `*byte` from `reg`. Do not manipulate CSN pin.
@@ -96,7 +96,7 @@ int __nrf_write_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t byte);
  * @returns
  * 0 if success, -1 if error.
  */
-int __nrf_read_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t *byte);
+int __nrf_read_reg(nrf_args *nrf, nrf_register reg, uint8_t *byte);
 
 /**
  * Init GPIOs and power nRF24L01 on. Sets address also.
@@ -104,7 +104,7 @@ int __nrf_read_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t *byte);
  * @returns
  * 0 if success, -1 if error.
  */
-int __nrf_init(struct nrf_args *nrf);
+int __nrf_init(nrf_args *nrf);
 
 /**
  * Send `nrf->data` and wait for ACK signal.
@@ -112,7 +112,7 @@ int __nrf_init(struct nrf_args *nrf);
  * @returns
  * 0 if success, -1 if error.
  */
-int __nrf_send(struct nrf_args *nrf);
+int __nrf_send(nrf_args *nrf);
 
 /**
  * Wait for data and download into `nrf->data`.
@@ -120,16 +120,16 @@ int __nrf_send(struct nrf_args *nrf);
  * @returns
  * 0 if success, -1 if error.
  */
-int __nrf_receive(struct nrf_args *nrf);
+int __nrf_receive(nrf_args *nrf);
 
 /**
  * Unexport GPIOs and shutdown nRF24L01. Assuming CSN LOW.
  */
-void __nrf_finalize(struct nrf_args *nrf);
+void __nrf_finalize(nrf_args *nrf);
 
 /**
  * Used on debugging. Do not manipulate CSN pin.
  */
-void __nrf_dump_registers(struct nrf_args *nrf);
+void __nrf_dump_registers(nrf_args *nrf);
 
 #endif

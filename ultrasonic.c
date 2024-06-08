@@ -12,7 +12,7 @@ double __us_read(int trig, int echo)
     gpio_write(trig, LOW);
     /* Recieve pulse */
     clock_t start, end;
-    enum gpio_value value;
+    gpio_value value;
     do
     {
         gpio_read(echo, &value);
@@ -30,7 +30,7 @@ double __us_read(int trig, int echo)
 
 void __us_thread_finalize(void *args)
 {
-    struct us_thread_args *__args = (struct us_thread_args *)args;
+    us_thread_args *__args = (us_thread_args *)args;
     gpio_unexport(__args->trig);
     gpio_unexport(__args->echo);
     free(__args);
@@ -38,7 +38,7 @@ void __us_thread_finalize(void *args)
 
 void *us_thread(void *args)
 {
-    struct us_thread_args *__args = (struct us_thread_args *)args;
+    us_thread_args *__args = (us_thread_args *)args;
     /* Init GPIO */
     gpio_export(__args->trig);
     gpio_export(__args->echo);
