@@ -6,10 +6,10 @@
 
 int main()
 {
-    char buffer[256] = "kimhyeonminIdiot";
-    int sock = socket_server(DEFAULT_PORT);
+    char buffer[256] = "kimhyunmin";
+    int sock = socket_client("192.168.12.4", DEFAULT_PORT);
     dprintf(sock, buffer);
-    read(sock, buffer, 256);
+    // read(sock, buffer, 256);
     printf("%s\n", buffer);
     return 0;
 }
