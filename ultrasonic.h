@@ -3,35 +3,35 @@
 
 #include <pthread.h>
 
-typedef struct __thread_args_us
+struct us_thread_args
 {
     pthread_t *tid;
     int polling_rate;
     int trig, echo;
-    double *speed;
-} targs_us;
+    double speed;
+};
 
 /**
- * @brief
- * Read GPIO from ultrasonic sensor.
- * 
- * @return
- * Measured distance(cm); -1 if error.
+ * Read ultrasonic sensor. Do not call manually.
+ *
+ * @returns
+ * Measured distance(cm). -1 if error.
  */
 double __us_read(int trig, int echo);
 
-void __us_finalize(void *args);
+/**
+ * Thread finalize function of `us_thread`.
+ */
+void __us_thread_finalize(void *args);
 
 /**
- * @brief
- * Routine that reads value from the ultrasonic sensor.
- * Access measured speed via `args->speed`.
- * 
+ * Constantly read ultrasonic sensor.
+ *
  * @param args
  * Use type `struct __thread_args_us *`.
- * 
- * @return
- * Nothing.
+ *
+ * @returns
+ * Nothing. Access `args.speed` to get measured speed. It will be -1 if error.
  */
 void *us_thread(void *args);
 

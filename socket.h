@@ -4,31 +4,28 @@
 #define DEFAULT_PORT 8888
 
 /**
- * @brief
- * Create a socket as server and wait for connection.
- * Socket must be closed.
- * 
+ * Create a socket as server and wait connection.
+ * Server socket will be closed automatically before return.
+ *
  * @param port
  * 포트지뭐긴뭐야
- * 
- * @return
- * Return the connected client socket. -1 if error.
+ *
+ * @returns
+ * Client socket fd. -1 if error.
  */
-int create_socket_server(int port);
+int socket_server(uint8_t port);
 
 /**
- * @brief
  * Create a socket as client and request connection.
- * Socket must be closed.
- * 
+ *
  * @param address
  * String type IPv4 address.
  * @param port
  * 포트지뭐긴뭐야
- * 
- * @return
+ *
+ * @returns
  * Return the connected socket. -1 if error.
  */
-int create_socket_client(char address[], int port);
+int socket_client(char address[], uint8_t port);
 
 #endif
