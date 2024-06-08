@@ -4,33 +4,31 @@
 #include <stdint.h>
 
 #define SPI_PATH "/dev/spidev0.0"
-#define SPI_SPEED 1000000
+#define SPI_SPEED 500000
 #define SPI_MODE SPI_MODE_0
 #define SPI_BITS_PER_WORD 8
 
 /**
- * @brief
  * Open SPI device and initialize it.
- * Device must be closed.
  * 
- * @return
- * SPI file descriptor. -1 if error.
+ * @returns
+ * SPI fd. -1 if error.
  */
 int spi_init();
 
 /**
- * @brief
- * Send a byte of data to SPI device,
- * and receive a byte of data from SPI device.
+ * Through SPI protocol, send a byte of data `tx` and receive a byte of data via `*rx`.
  * 
  * @param spi_fd
  * SPI device file descriptor.
  * @param tx
- * A byte of data to be sent to SPI device.
+ * 보낼거
+ * @param rx
+ * 받는곳
  * 
- * @return
- * A byte of data received. 0 if error.
+ * @returns
+ * 0 if success, -1 if error.
  */
-uint8_t spi_transfer(int spi_fd, uint8_t tx);
+int spi_transfer(int spi_fd, uint8_t tx, uint8_t *rx);
 
 #endif

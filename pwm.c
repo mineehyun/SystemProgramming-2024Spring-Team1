@@ -1,122 +1,135 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include "pwm.h"
 
-void PWMExport(int pwm_num)
+int pwm_export(enum pwm_num pwm_num)
 {
     int fd = open(PWM_EXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMExport] open");
+        perror("[pwm_export] open");
+        return -1;
     }
-    else if (dprintf(fd, "%d", pwm_num) == -1)
+    if (dprintf(fd, "%d", pwm_num) == -1)
     {
-        perror("[PWMExport] dprintf");
+        close(fd);
+        perror("[pwm_export] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMUnexport(int pwm_num)
+int pwm_unexport(enum pwm_num pwm_num)
 {
     int fd = open(PWM_UNEXPORT_PATH, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMUnexport] open");
+        perror("[pwm_unexport] open");
+        return -1;
     }
-    else if (dprintf(fd, "%d", pwm_num) == -1)
+    if (dprintf(fd, "%d", pwm_num) == -1)
     {
-        perror("[PWMUnexport] dprintf");
+        close(fd);
+        perror("[pwm_unexport] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMEnable(int pwm_num)
+int pwm_enable(enum pwm_num pwm_num)
 {
     char buffer[BUFLEN];
-    if (snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num) == -1)
-    {
-        perror("[PWMEnable] snprintf");
-        return;
-    }
+    snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMEnable] open");
+        perror("[pwm_enable] open");
+        return -1;
     }
-    else if (dprintf(fd, "1") == -1)
+    if (dprintf(fd, "1") == -1)
     {
-        perror("[PWMEnable] dprintf");
+        close(fd);
+        perror("[pwm_enable] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMDisable(int pwm_num)
+int pwm_disable(enum pwm_num pwm_num)
 {
     char buffer[BUFLEN];
-    if (snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num) == -1)
-    {
-        perror("[PWMDisable] snprintf");
-        return;
-    }
+    snprintf(buffer, BUFLEN, PWM_ENABLE_PATH, pwm_num);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMDisable] open");
+        perror("[pwm_disable] open");
+        return -1;
     }
-    else if (dprintf(fd, "0") == -1)
+    if (dprintf(fd, "0") == -1)
     {
-        perror("[PWMDisable] dprintf");
+        close(fd);
+        perror("[pwm_disable] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMWritePeriod(int pwm_num, int value)
+int pwm_write_period(enum pwm_num pwm_num, uint32_t period)
 {
     char buffer[BUFLEN];
-    if (snprintf(buffer, BUFLEN, PWM_PERIOD_PATH, pwm_num) == -1)
-    {
-        perror("[PWMPeriod] snprintf");
-        return;
-    }
+    snprintf(buffer, BUFLEN, PWM_PERIOD_PATH, pwm_num);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMPeriod] open");
+        perror("[pwm_write_period] open");
+        return -1;
     }
-    else if (dprintf(fd, "%d", value) == -1)
+    if (dprintf(fd, "%d", period) == -1)
     {
-        perror("[PWMPeriod] dprintf");
+        close(fd);
+        perror("[pwm_write_period] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMWriteDutyCycle(int pwm_num, int value)
+int pwm_write_duty_cycle(enum pwm_num pwm_num, uint32_t duty_cycle)
 {
     char buffer[BUFLEN];
-    if (snprintf(buffer, BUFLEN, PWM_DUTYCYCLE_PATH, pwm_num) == -1)
-    {
-        perror("[PWMDutyCycle] snprintf");
-        return;
-    }
+    snprintf(buffer, BUFLEN, PWM_DUTY_CYCLE_PATH, pwm_num);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[PWMDutyCycle] open");
+        perror("[pwm_write_duty_cycle] open");
+        return -1;
     }
-    else if (dprintf(fd, "%d", value) == -1)
+    if (dprintf(fd, "%d", duty_cycle) == -1)
     {
-        perror("[PWMDutyCycle] dprintf");
+        close(fd);
+        perror("[pwm_write_duty_cycle] dprintf");
+        return -1;
     }
     close(fd);
+    return 0;
 }
 
-void PWMWriteRatio(int pwm_num, float ratio)
+int pwm_ratio(enum pwm_num pwm_num, float ratio)
 {
     if (ratio < 0 || 1 < ratio)
     {
-        fprintf(stderr, "[PWMRatio] Invalid ratio %.2f\n", ratio);
-        return;
+        fprintf(stderr, "[pwm_ratio] Invalid ratio\n");
+        return -1;
     }
-    PWMWritePeriod(pwm_num, DEFAULT_PERIOD);
-    PWMWriteDutyCycle(pwm_num, (int)(ratio * DEFAULT_PERIOD));
+    if (pwm_write_period(pwm_num, DEFAULT_PERIOD) == -1)
+        return -1;
+    unsigned int __duty_cycle = (int)(DEFAULT_PERIOD * ratio);
+    if (pwm_write_duty_cycle(pwm_num, __duty_cycle) == -1)
+        return -1;
+    return 0;
 }
