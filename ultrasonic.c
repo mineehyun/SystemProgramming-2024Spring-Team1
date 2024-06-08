@@ -42,8 +42,8 @@ void *us_thread(void *args)
     /* Init GPIO */
     gpio_export(__args->trig);
     gpio_export(__args->echo);
-    gpio_direction(__args->trig, OUT);
-    gpio_direction(__args->echo, IN);
+    gpio_set_direction(__args->trig, OUT);
+    gpio_set_direction(__args->echo, IN);
     /* Start */
     clock_t start, end, dt;
     double distance_old, distance = 0;

@@ -43,9 +43,9 @@ void setPinConfig(int pwm_num, int INA, int INB)
 {
   pwm_unexport(pwm_num);
   gpio_export(INA);
-  gpio_direction(INA, OUTPUT);
+  gpio_set_direction(INA, OUTPUT);
   gpio_export(INB);
-  gpio_direction(INB, OUTPUT);
+  gpio_set_direction(INB, OUTPUT);
 
   pwm_export(pwm_num);
   pwm_write_period(pwm_num, DEFAULT_PERIOD);
@@ -107,7 +107,7 @@ void *emergency_signal_thread(void *arg)
 
   gpio_unexport(BUTTON);
   gpio_export(BUTTON);
-  gpio_direction(BUTTON, INPUT);
+  gpio_set_direction(BUTTON, INPUT);
 
   enum gpio_value button_state;
 

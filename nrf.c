@@ -32,8 +32,8 @@ int __nrf_init(struct nrf_args *nrf)
     /* Initialize GPIO pins for CE and CSN */
     gpio_export(CE);
     gpio_export(CSN);
-    gpio_direction(CE, OUT);
-    gpio_direction(CSN, OUT);
+    gpio_set_direction(CE, OUT);
+    gpio_set_direction(CSN, OUT);
     gpio_write(CE, LOW);
     gpio_write(CSN, HIGH);
     usleep(10000);

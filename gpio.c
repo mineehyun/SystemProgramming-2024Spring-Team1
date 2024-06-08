@@ -40,27 +40,27 @@ int gpio_unexport(int pin)
     return 0;
 }
 
-int gpio_direction(int pin, enum gpio_direction direction)
+int gpio_set_direction(int pin, gpio_direction direction)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, GPIO_DIRECTION_PATH, pin);
     int fd = open(buffer, O_WRONLY);
     if (fd == -1)
     {
-        perror("[gpio_direction] open");
+        perror("[gpio_set_direction] open");
         return -1;
     }
     if (dprintf(fd, (direction == IN) ? "in" : "out") == -1)
     {
         close(fd);
-        perror("[gpio_direction] dprintf");
+        perror("[gpio_set_direction] dprintf");
         return -1;
     }
     close(fd);
     return 0;
 }
 
-int gpio_write(int pin, enum gpio_value value)
+int gpio_write(int pin, gpio_value value)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin);
@@ -80,7 +80,7 @@ int gpio_write(int pin, enum gpio_value value)
     return 0;
 }
 
-int gpio_read(int pin, enum gpio_value *value)
+int gpio_read(int pin, gpio_value *value)
 {
     char buffer[BUFLEN];
     snprintf(buffer, BUFLEN, GPIO_VALUE_PATH, pin);
