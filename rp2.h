@@ -1,5 +1,5 @@
-#ifndef __RP3_H__
-#define __RP3_H__
+#ifndef __RP2_H__
+#define __RP2_H__
 
 #define NO_RAIN_GPIO 14
 
