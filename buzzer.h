@@ -48,6 +48,14 @@ typedef struct
     unsigned int score_length;
 } buzzer_thread_args;
 
+typedef struct
+{
+    pthread_t tid;
+    pwm_num pwm_num;
+    uint32_t freq_min;
+    uint32_t freq_max;
+} siren_thread_args;
+
 /**
  * Plays a single note. Do not manipulates pwm/gpio pins.
  *
@@ -79,5 +87,24 @@ void __buzzer_thread_finalize(void *args);
  * Nothing.
  */
 void *buzzer_thread(void *args);
+
+/**
+ * Thread finalize function of `siren_thread`.
+ * 
+ * @param args
+ * Use type `siren_thread_args *`
+ */
+void __buzzer_thread_finalize(void *args);
+
+/**
+ * Siren thread. Also set PWM pins.
+ * 
+ * @param args
+ * Use type `siren_thread_args *`
+ * 
+ * @returns
+ * Nothing.
+ */
+void *siren_thread(void *args);
 
 #endif
