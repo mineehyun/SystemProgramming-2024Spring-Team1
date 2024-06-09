@@ -14,7 +14,6 @@
 #include <sys/time.h>
 #include "bcm2835.c"
 #include <unistd.h>
-#include "rp2.h"
 
 #define MAXTIMINGS 100
 #define AM2302 22
