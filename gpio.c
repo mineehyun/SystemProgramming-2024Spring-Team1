@@ -90,7 +90,7 @@ int gpio_read(int pin, gpio_value *value)
         perror("[gpio_read] open");
         return -1;
     }
-    if (read(fd, buffer, 3) == -1)
+    if (read(fd, buffer, 3) < 1)
     {
         close(fd);
         perror("[gpio_read] read");

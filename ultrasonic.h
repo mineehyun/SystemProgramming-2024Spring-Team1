@@ -28,7 +28,7 @@ double __us_read(int trig, int echo);
 void __us_thread_finalize(void *args);
 
 /**
- * Constantly read ultrasonic sensor. Access `args->speed` to get measured speed. It will be -1 if error.
+ * Read ultrasonic sensor repeatedly. Access `args->speed` to get measured speed. It will be -1 if error.
  *
  * @param args
  * Use type `us_thread_args *`.
