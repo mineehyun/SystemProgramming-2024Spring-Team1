@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h> 
 #include "rain.c"
-#include "dht.c"
+#include "dht11.c"
 #include "light.c"
 
 
@@ -14,7 +14,7 @@ struct weatherResult {
 };
 
 struct weatherResult* weatherresult;
-struct weatherResult* main() {
+int main() {
   pthread_t p_thread[3];
   int thr_id;
   int status;
@@ -47,7 +47,7 @@ struct weatherResult* main() {
   weatherresult -> light = *light;
   weatherresult -> rain = *rain;
 
-  sleep(180);
+  sleep(1);
   // event function들 return값 정리 -> 날씨 저장
   }
  
