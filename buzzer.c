@@ -6,15 +6,16 @@ int __buzzer_play_note(pwm_num pwm_num, note *note)
 {
     uint32_t period = 1000000000 / note->pitch;
     uint32_t duty_cycle = period / 2;
-    printf("period %d dur %2lf\n", period, note->duration);
     if (pwm_write_period(pwm_num, period) == -1)
     {
         perror("[__buzzer_play_note] pwm_write_period");
+        usleep((int)(note->duration * 1000000));
         return -1;
     }
     if (pwm_write_duty_cycle(pwm_num, duty_cycle) == -1)
     {
         perror("[__buzzer_play_note] pwm_write_duty_cycle");
+        usleep((int)(note->duration * 1000000));
         return -1;
     }
     usleep((int)(note->duration * 1000000));
