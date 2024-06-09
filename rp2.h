@@ -4,8 +4,8 @@
 #define NO_RAIN_GPIO 14
 
 struct DHTresult{
-	float humi;
-	float temp;
+	int humi;
+	int temp;
 };
 
 struct weatherResult {
