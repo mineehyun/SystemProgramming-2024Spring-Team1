@@ -49,7 +49,6 @@ void __siren_thread_finalize(void *args)
 {
     siren_thread_args *__args = (siren_thread_args *)args;
     pwm_unexport(__args->pwm_num);
-    free(__args);
 }
 
 void *siren_thread(void *args)
