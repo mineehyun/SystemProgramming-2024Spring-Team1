@@ -82,9 +82,6 @@ void __buzzer_thread_finalize(void *args);
  * 
  * @param args
  * Use type `buzzer_thread_args *`
- * 
- * @returns
- * Nothing.
  */
 void *buzzer_thread(void *args);
 
@@ -101,9 +98,6 @@ void __siren_thread_finalize(void *args);
  * 
  * @param args
  * Use type `siren_thread_args *`
- * 
- * @returns
- * Nothing.
  */
 void *siren_thread(void *args);
 

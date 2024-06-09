@@ -43,7 +43,6 @@ void *buzzer_thread(void *args)
     }
     pwm_disable(__args->pwm_num);
     pthread_cleanup_pop(1);
-    return NULL;
 }
 
 void __siren_thread_finalize(void *args)
@@ -80,5 +79,4 @@ void *siren_thread(void *args)
     }
     pwm_disable(__args->pwm_num);
     pthread_cleanup_pop(1);
-    return NULL;
 }

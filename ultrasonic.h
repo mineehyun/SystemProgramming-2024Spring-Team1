@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    pthread_t *tid;
+    pthread_t tid;
     int polling_rate;
     int trig, echo;
     double speed;
@@ -28,13 +28,10 @@ double __us_read(int trig, int echo);
 void __us_thread_finalize(void *args);
 
 /**
- * Constantly read ultrasonic sensor.
+ * Constantly read ultrasonic sensor. Access `args->speed` to get measured speed. It will be -1 if error.
  *
  * @param args
  * Use type `us_thread_args *`.
- *
- * @returns
- * Nothing. Access `args.speed` to get measured speed. It will be -1 if error.
  */
 void *us_thread(void *args);
 

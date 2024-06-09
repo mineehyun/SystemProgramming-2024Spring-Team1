@@ -40,10 +40,15 @@ void *us_thread(void *args)
 {
     us_thread_args *__args = (us_thread_args *)args;
     /* Init GPIO */
-    gpio_export(__args->trig);
-    gpio_export(__args->echo);
-    gpio_set_direction(__args->trig, OUT);
-    gpio_set_direction(__args->echo, IN);
+    if (gpio_export(__args->trig) ||
+        gpio_export(__args->echo) ||
+        gpio_set_direction(__args->trig, OUT) ||
+        gpio_set_direction(__args->echo, IN))
+    {
+        __args->speed = -1;
+        perror("[us_thread] GPIO");
+        return NULL;
+    }
     /* Start */
     clock_t start, end, dt;
     double distance_old, distance = 0, speed;
