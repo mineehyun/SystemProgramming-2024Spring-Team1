@@ -6,21 +6,16 @@
 #include "gpio1.h"
 
 #define NO_RAIN_GPIO 14
+// flag == 1: no_rain 
+// flag == 0: yes_rain
 
-int main() {
+void* rain_function(void* rain) {
     GPIOExport(NO_RAIN_GPIO);
     GPIODirection(NO_RAIN_GPIO, 0);
+    int rain_flag = GPIORead(NO_RAIN_GPIO);
+    rain = &rain_flag;
+    printf("%d", rain_flag);
 
-    while (1) {
-        int no_rain = GPIORead(NO_RAIN_GPIO);
-        
-        if (no_rain == 1) {
-            printf("nothingssssss\n");
-        } else if (no_rain == 0) {
-            printf("It's raining - get the washing in!\n");
-        }
-        sleep(1);
-    }
     GPIOUnexport(NO_RAIN_GPIO);
-    return 0;
+    return rain;
 }

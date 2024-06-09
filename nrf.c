@@ -4,7 +4,7 @@
 #include "spi.h"
 #include "nrf.h"
 
-int __nrf_write_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t byte)
+int __nrf_write_reg(nrf_args *nrf, nrf_register reg, uint8_t byte)
 {
     if (spi_transfer(nrf->spi_fd, W_REGISTER | reg, NULL) == -1 ||
         spi_transfer(nrf->spi_fd, byte, NULL) == -1)
@@ -15,7 +15,7 @@ int __nrf_write_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t byte)
     return 0;
 }
 
-int __nrf_read_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t *byte)
+int __nrf_read_reg(nrf_args *nrf, nrf_register reg, uint8_t *byte)
 {
     // if (spi_transfer(nrf->spi_fd, R_REGISTER | reg, byte))
     if (spi_transfer(nrf->spi_fd, R_REGISTER | reg, NULL) == -1 ||
@@ -27,13 +27,13 @@ int __nrf_read_reg(struct nrf_args *nrf, enum nrf_register reg, uint8_t *byte)
     return 0;
 }
 
-int __nrf_init(struct nrf_args *nrf)
+int __nrf_init(nrf_args *nrf)
 {
     /* Initialize GPIO pins for CE and CSN */
     gpio_export(CE);
     gpio_export(CSN);
-    gpio_direction(CE, OUT);
-    gpio_direction(CSN, OUT);
+    gpio_set_direction(CE, OUT);
+    gpio_set_direction(CSN, OUT);
     gpio_write(CE, LOW);
     gpio_write(CSN, HIGH);
     usleep(10000);
@@ -99,7 +99,7 @@ int __nrf_init(struct nrf_args *nrf)
     return 0;
 }
 
-int __nrf_send(struct nrf_args *nrf)
+int __nrf_send(nrf_args *nrf)
 {
     /* Test mode */
     if (nrf->mode == TX_MODE)
@@ -160,7 +160,7 @@ int __nrf_send(struct nrf_args *nrf)
     SPI_OFF();
 }
 
-int __nrf_receive(struct nrf_args *nrf)
+int __nrf_receive(nrf_args *nrf)
 {
     /* Test mode */
     if (nrf->mode == RX_MODE)
@@ -223,7 +223,7 @@ int __nrf_receive(struct nrf_args *nrf)
     return 0;
 }
 
-void __nrf_finalize(struct nrf_args *nrf)
+void __nrf_finalize(nrf_args *nrf)
 {
     /* Check problem */
     // __nrf_dump_registers(nrf);
@@ -237,7 +237,7 @@ void __nrf_finalize(struct nrf_args *nrf)
     gpio_unexport(CSN);
 }
 
-void __nrf_dump_registers(struct nrf_args *nrf)
+void __nrf_dump_registers(nrf_args *nrf)
 {
     uint8_t address[ADDR_LENGTH];
     uint8_t byte;

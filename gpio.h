@@ -10,17 +10,17 @@
 #define BUFLEN 256
 #endif
 
-enum gpio_direction
+typedef enum
 {
     IN = 0,
     OUT = 1,
-};
+} gpio_direction;
 
-enum gpio_value
+typedef enum
 {
     LOW = 0,
     HIGH = 1,
-};
+} gpio_value;
 
 /**
  * @returns
@@ -38,13 +38,13 @@ int gpio_unexport(int pin);
  * @returns
  * 0 if success, -1 if error.
  */
-int gpio_direction(int pin, enum gpio_direction direction);
+int gpio_set_direction(int pin, gpio_direction direction);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int gpio_write(int pin, enum gpio_value value);
+int gpio_write(int pin, gpio_value value);
 
 /**
  * @param value
@@ -53,6 +53,6 @@ int gpio_write(int pin, enum gpio_value value);
  * @returns
  * 0 if success, -1 if error.
  */
-int gpio_read(int pin, enum gpio_value *value);
+int gpio_read(int pin, gpio_value *value);
 
 #endif

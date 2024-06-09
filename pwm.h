@@ -15,47 +15,47 @@
 #define BUFLEN 256
 #endif
 
-enum pwm_num
+typedef enum
 {
     PWM0 = 0,
     PWM1 = 1,
-};
+} pwm_num;
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_export(enum pwm_num pwm_num);
+int pwm_export(pwm_num pwm_num);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_unexport(enum pwm_num pwm_num);
+int pwm_unexport(pwm_num pwm_num);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_enable(enum pwm_num pwm_num);
+int pwm_enable(pwm_num pwm_num);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_disable(enum pwm_num pwm_num);
+int pwm_disable(pwm_num pwm_num);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_write_period(enum pwm_num pwm_num, uint32_t period);
+int pwm_write_period(pwm_num pwm_num, uint32_t period);
 
 /**
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_write_duty_cycle(enum pwm_num pwm_num, uint32_t duty_cycle);
+int pwm_write_duty_cycle(pwm_num pwm_num, uint32_t duty_cycle);
 
 /**
  * Call `pwm_write_period` and `pwm_write_duty_cycle` at once.
@@ -63,6 +63,6 @@ int pwm_write_duty_cycle(enum pwm_num pwm_num, uint32_t duty_cycle);
  * @returns
  * 0 if success, -1 if error.
  */
-int pwm_ratio(enum pwm_num pwm_num, float ratio);
+int pwm_ratio(pwm_num pwm_num, float ratio);
 
 #endif

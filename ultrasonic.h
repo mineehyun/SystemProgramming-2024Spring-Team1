@@ -3,13 +3,13 @@
 
 #include <pthread.h>
 
-struct us_thread_args
+typedef struct
 {
     pthread_t *tid;
     int polling_rate;
     int trig, echo;
     double speed;
-};
+} us_thread_args;
 
 /**
  * Read ultrasonic sensor. Do not call manually.
