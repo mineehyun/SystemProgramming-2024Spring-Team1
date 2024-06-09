@@ -94,7 +94,7 @@ void *buzzer_thread(void *args);
  * @param args
  * Use type `siren_thread_args *`
  */
-void __buzzer_thread_finalize(void *args);
+void __siren_thread_finalize(void *args);
 
 /**
  * Siren thread. Also set PWM pins.
