@@ -46,7 +46,7 @@ void *us_thread(void *args)
     gpio_set_direction(__args->echo, IN);
     /* Start */
     clock_t start, end, dt;
-    double distance_old, distance = 0;
+    double distance_old, distance = 0, speed;
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_cleanup_push(__us_thread_finalize, args);
     while (1)
@@ -56,7 +56,10 @@ void *us_thread(void *args)
         distance_old = distance;
         distance = __us_read(__args->trig, __args->echo);
         end = clock();
-        __args->speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
+        speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
+        if (speed < 0 || 3000 < speed)
+            continue;
+        __args->speed = speed;
     }
     pthread_cleanup_pop(0);
 }
