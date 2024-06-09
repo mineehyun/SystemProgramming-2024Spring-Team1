@@ -22,7 +22,7 @@
 #define HIGH 1
 #define LOW 0
 
-#define ENB 18 // GPIO 18 for PWM channel 0
+// #define ENB 18 // GPIO 18 for PWM channel 0 얘 빼도 되는지 안되는지 모르겠음!!!!!!!!!!!
 
 // Changed GPIO pins for IN3 and IN4
 #define IN3 23 // GPIO 23 (physical pin 16)
@@ -32,6 +32,10 @@
 
 #define VALUE_MAX 40
 #define DIRECTION_MAX 40
+
+#define BUZZER 1 // GPIO 13 for PWM channel 1
+
+const int Melody[9] = {131, 147, 165, 175, 196, 208, 220, 247, 262};
 
 void setPinConfig(int pwm_num, int INA, int INB)
 {
@@ -90,8 +94,6 @@ void *motor_control_thread(void *arg)
   // sleep(1);
 
   // setMotor(0.80, STOP);
-
-  // pwm_disable(0);
   pwm_disable(0);
   gpio_unexport(IN3);
   gpio_unexport(IN4);
@@ -109,24 +111,28 @@ void *emergency_signal_thread(void *arg)
   gpio_export(BUTTON_PIN);
   gpio_direction(BUTTON_PIN, INPUT);
 
+  pwm_export(BUZZER);
+  pwm_enable(BUZZER);
+
   int client_sock;
   // int prev_btn = 1; // 버튼이 눌리지 않은 상태
 
   enum gpio_value button_state;
-  enum gpio_value last_button_state = HIGH;
+  enum gpio_value prev_button_state = HIGH;
 
   while (1)
   {
     gpio_read(BUTTON_PIN, &button_state);
 
-    if (button_state == LOW && last_button_state == HIGH)
+    // 버튼이 눌렸을 때
+    // if ( (button_state == LOW && prev_button_state == HIGH) || button_state == HIGH && prev_button_state == LOW)
+    if (button_state != prev_button_state)
     {
-      // 버튼이 눌렸을 때 (HIGH -> LOW 전환)
+      // (1) 서버 소켓에 메세지 전달
       client_sock = socket_client("192.168.14.4", DEFAULT_PORT);
       if (client_sock != -1)
       {
         char *client_message = "Emergency vehicles are approaching!\n";
-        // write(client_sock, client_message, strlen(client_message));
         dprintf(client_sock, "%s", client_message);
         close(client_sock); // 소켓 사용 후 닫기
       }
@@ -134,15 +140,29 @@ void *emergency_signal_thread(void *arg)
       {
         perror("socket_client failed");
       }
-      //  pthread_detach(client_thread);
+
+      //(2) 부저 작동
+      unsigned int period, duty_cycle;
+      for (unsigned int freq = 100; freq <= 2000; freq += 10)
+      {
+        period = 1000000000 / freq;
+        duty_cycle = period / 2;
+        if (pwm_write_period(BUZZER, period) == -1)
+          return NULL;
+        // printf("Frequency: %d Hz, Period: %u ns, Duty Cycle: %u ns\n", freq, period, duty_cycle);
+        usleep(10000);
+      }
     }
 
-    last_button_state = button_state;
+    prev_button_state = button_state;
 
     usleep(100000); // 100ms 대기
   }
+  pwm_disable(BUZZER);
+  pwm_unexport(BUZZER);
 
   gpio_unexport(BUTTON_PIN);
+
   return NULL;
 }
 
