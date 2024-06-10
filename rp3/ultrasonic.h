@@ -3,10 +3,11 @@
 
 #include <pthread.h>
 
+#define DELTA_T 100000 // calc speed every 0.1s
+
 typedef struct
 {
     pthread_mutex_t lock;
-    int polling_rate;
     int trig, echo;
     double speed;
 } us_thread_args;

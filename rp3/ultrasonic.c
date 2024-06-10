@@ -27,7 +27,12 @@ double __us_read(int trig, int echo)
     } while (value == HIGH);
     /* Calc distance(cm) */
     double dt = (double)(end - start) / CLOCKS_PER_SEC;
-    return dt * 34300 / 2;
+    double distance = dt * 34300 / 2;
+    if (distance < 0 || 100 < distance)
+    {
+        distance = -1;
+    }
+    return distance;
 }
 
 void __us_thread_finalize(void *args)
@@ -62,14 +67,18 @@ void *us_thread(void *args)
     while (1)
     {
         start = clock();
-        usleep(1000000 / __args->polling_rate);
+        usleep(DELTA_T);
         distance_old = distance;
         distance = __us_read(__args->trig, __args->echo);
+        if (distance == -1)
+        {
+            distance = distance_old; // restore value
+            perror("[us_thread] __us_read");
+            continue;
+        }
         end = clock();
         speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
-        if (speed < 0 || 3000 < speed)
-            continue;
-        /* Update speed using lock */
+        /* Update speed in lock */
         pthread_mutex_lock(&__args->lock);
         __args->speed = speed;
         pthread_mutex_unlock(&__args->lock);
