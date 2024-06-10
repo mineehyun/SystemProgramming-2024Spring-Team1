@@ -42,18 +42,23 @@ void *us_thread(void *args)
     us_thread_args *__args = (us_thread_args *)args;
     /* Init GPIO */
     if (gpio_export(__args->trig) ||
-        gpio_export(__args->echo) ||
-        gpio_set_direction(__args->trig, OUT) ||
+        gpio_export(__args->echo))
+    {
+        __args->speed = -1;
+        perror("[us_thread] GPIO export");
+        return NULL;
+    }
+    pthread_cleanup_push(__us_thread_finalize, args);
+    if (gpio_set_direction(__args->trig, OUT) ||
         gpio_set_direction(__args->echo, IN))
     {
         __args->speed = -1;
-        perror("[us_thread] GPIO");
+        perror("[us_thread] GPIO direction");
         return NULL;
     }
     /* Start */
     clock_t start, end, dt;
     double distance_old, distance = 0, speed;
-    pthread_cleanup_push(__us_thread_finalize, args);
     while (1)
     {
         start = clock();
