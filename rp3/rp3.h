@@ -21,12 +21,17 @@
 
 typedef struct
 {
+    /* tid of current `execute_thread`. if there is not, set to 0 */
     pthread_t tid_executing;
-    int sockfd_rp1;
+    pthread_mutex_t lock_execute;
+    /* data from rp2 */
     struct weatherResult rp2_data;
+    pthread_mutex_t lock_rp2;
+    /* data from ultrasonic sensor */
     us_thread_args *us_data;
-    pthread_mutex_t lock_rp2, lock_execute;
-    pthread_cond_t cond_executed;
+    pthread_mutex_t lock_us;
+    /* other thread configs */
+    int sockfd_rp1;
     int polling_rate;
     uint8_t motor_pin;
 } rp3_thread_args;

@@ -89,7 +89,11 @@ void __execute_thread_finalize(void *args)
     /* Unexport GPIO */
     gpio_write(__args->motor_pin, LOW);
     gpio_unexport(__args->motor_pin);
-    /* Confirm `execute_thread` terminated so that another thread can run without pthread_cancel */
+    /** 
+     * Use `__args->tid_executing` as flag;
+     * confirms `execute_thread` terminated
+     * so that another `execute_thread` can proceed without cancel.
+     */
     pthread_mutex_lock(&__args->lock_execute);
     __args->tid_executing = 0;
     pthread_mutex_unlock(&__args->lock_execute);
@@ -101,7 +105,8 @@ void *execute_thread(void *args)
     /* Temporarily set uncancelable */
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
     /**
-     * If another thread running `execute_thread`, cancel it.
+     * Use `__args->tid_executing` as flag;
+     * if there is another thread running `execute_thread`, cancel it.
      * So that overlapped calling of `execute_thread` is allowed.
      */
     pthread_mutex_lock(&__args->lock_execute);
@@ -117,9 +122,9 @@ void *execute_thread(void *args)
     gpio_export(__args->motor_pin);
     pthread_cleanup_push(__execute_thread_finalize, args);
     gpio_set_direction(__args->motor_pin, OUT);
-    gpio_write(__args->motor_pin, LOW);
     /* Motor run! */
     gpio_write(__args->motor_pin, HIGH);
     sleep(MOTOR_DURATION);
     pthread_cleanup_pop(1);
+    /* gpio_write(__args->motor_pin, LOW) is in cleanup function */
 }
