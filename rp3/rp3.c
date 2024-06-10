@@ -9,18 +9,13 @@
 #include "ultrasonic.c"
 #include "rp3.h"
 
-void __rp1_thread_finalize(void *args)
-{
-    return;
-}
-
 void *__rp1_thread(void *args)
 {
     rp3_thread_args *__args = (rp3_thread_args *)args;
     char buffer;
-    pthread_cleanup_push(__rp1_thread_finalize, args);
     while (1)
     {
+        printf("[__rp1_thread] Waiting for data from rp1...");
         if (read(__args->sockfd_rp1, &buffer, 1) < 1)
         {
             perror("[__rp1_thread] read");
@@ -28,23 +23,33 @@ void *__rp1_thread(void *args)
         }
         if (buffer != 1)
         {
-            pthread_exit(NULL);
+            break;
         }
-        __args->tid_executing;
+        printf("[__rp1_thread] Received.");
         pthread_t tid;
         pthread_create(&tid, NULL, execute_thread, args);
-        pthread_join(tid, NULL);
     }
-    pthread_cleanup_pop(1);
 }
 
-void __rp2_thread_finalize(void *args);
-
-void *__rp2_thread(void *args);
-
-void __monitor_thread_finalize(void *args)
+void *__rp2_thread(void *args)
 {
-
+    rp3_thread_args *__args = (rp3_thread_args *)args;
+    struct weatherResult buffer;
+    while (1)
+    {
+        if (read(__args->sockfd_rp2, &buffer, sizeof(struct weatherResult)) < 1)
+        {
+            perror("[__rp2_thread] read");
+            continue;
+        }
+        if (buffer.light == -1 || buffer.rain == -1 || buffer.DHT.humi == -1 || buffer.DHT.temp == -1)
+        {
+            break;
+        }
+        pthread_mutex_lock(&__args->lock_rp2);
+        __args->rp2_data = buffer;
+        pthread_mutex_unlock(&__args->lock_rp2);
+    }
 }
 
 void *monitor_thread(void *args)

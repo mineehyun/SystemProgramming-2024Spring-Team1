@@ -31,17 +31,10 @@ typedef struct
     us_thread_args *us_data;
     /* other thread configs */
     int sockfd_rp1;
+    int sockfd_rp2;
     int polling_rate;
     uint8_t motor_pin;
 } rp3_thread_args;
-
-/**
- * Thread finalize function of `__rp1_thread`.
- *
- * @param args
- * Use type `rp3_thread_args *`.
- */
-void __rp1_thread_finalize(void *args);
 
 /**
  * Receive 긴급차량 signal from rp1.
@@ -52,14 +45,6 @@ void __rp1_thread_finalize(void *args);
  * Use type `rp3_thread_args *`.
  */
 void *__rp1_thread(void *args);
-
-/**
- * Thread finalize function of `__rp2_thread`.
- *
- * @param args
- * Use type `rp3_thread_args *`.
- */
-void __rp2_thread_finalize(void *args);
 
 /**
  * Receive weather data from rp2.
