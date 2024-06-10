@@ -86,7 +86,7 @@ void *monitor_thread(void *args)
              * is handled in `execute_thread`.
              */
         }
-        usleep(1000000 / __args->polling_rate);
+        usleep(MONITOR_INTERVAL);
     }
 }
 

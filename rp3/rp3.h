@@ -15,6 +15,9 @@
 /* Duration to activate motor */
 #define MOTOR_DURATION 10 // sec
 
+/* Monitoring interval */
+#define MONITOR_INTERVAL 10000 // check condition every 0.01s
+
 #ifndef BUFLEN
 #define BUFLEN 256
 #endif
@@ -32,7 +35,6 @@ typedef struct
     /* other thread configs */
     int sockfd_rp1;
     int sockfd_rp2;
-    int polling_rate;
     uint8_t motor_pin;
 } rp3_thread_args;
 
