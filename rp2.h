@@ -3,15 +3,23 @@
 
 #define NO_RAIN_GPIO 14
 
-struct DHTresult{
-	int humi;
-	int temp;
+typedef enum
+{
+  DRY = 0,
+  WET = 1,
+} rain_state;
+
+struct DHTresult
+{
+  int humi;
+  int temp;
 };
 
-struct weatherResult {
+struct weatherResult
+{
   struct DHTresult DHT;
-  char light; 
-  int rain;
+  int light;
+  rain_state rain;
 };
 
 #endif
