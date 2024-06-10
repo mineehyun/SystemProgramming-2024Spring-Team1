@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
@@ -7,6 +8,7 @@
 
 int socket_server(uint32_t port)
 {
+    printf("Creating a socket with port %d...\n", port);
     /* Server socket */
     struct sockaddr_in server_address = {0};
     server_address.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -40,12 +42,18 @@ int socket_server(uint32_t port)
         close(server_sock);
         return -1;
     }
+    // /* Make client socket non-blocking */
+    // int flag = fcntl(client_sock, F_GETFL, 0);
+    // fcntl(client_sock, F_SETFL, flag | O_NONBLOCK);
+    /* Finalize */
     close(server_sock);
+    printf("Connection established.\n");
     return client_sock;
 }
 
 int socket_client(char address[], uint32_t port)
 {
+    printf("Creating a socket with address %s:%d...\n", address, port);
     struct sockaddr_in server_address = {0};
     server_address.sin_addr.s_addr = inet_addr(address);
     server_address.sin_family = AF_INET;
@@ -62,5 +70,6 @@ int socket_client(char address[], uint32_t port)
         close(sock);
         return -1;
     }
+    printf("Connection established.\n");
     return sock;
 }

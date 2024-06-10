@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <pthread.h>
-#include "gpio.h"
+#include "../gpio.h"
 #include "ultrasonic.h"
 
 double __us_read(int trig, int echo)
@@ -70,14 +70,19 @@ void *us_thread(void *args)
         usleep(DELTA_T);
         distance_old = distance;
         distance = __us_read(__args->trig, __args->echo);
+        /* if distance is invalid */
         if (distance == -1)
         {
-            distance = distance_old; // restore value
-            perror("[us_thread] __us_read");
-            continue;
+            /* Restore value for next iteration */
+            distance = distance_old;
+            /* Update speed to 0 to assume there is no car */
+            speed = 0.0;
         }
-        end = clock();
-        speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
+        else
+        {
+            end = clock();
+            speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
+        }
         /* Update speed in lock */
         pthread_mutex_lock(&__args->lock);
         __args->speed = speed;
