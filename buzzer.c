@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <pthread.h>
 #include "buzzer.h"
 
 int __buzzer_play_note(pwm_num pwm_num, note *note)

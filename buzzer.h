@@ -1,7 +1,6 @@
 #ifndef __BUZZER_H__
 #define __BUZZER_H__
 
-#include <pthread.h>
 #include "pwm.h"
 
 typedef enum
@@ -42,7 +41,6 @@ typedef struct
 
 typedef struct
 {
-    pthread_t tid;
     pwm_num pwm_num;
     note *score;
     unsigned int score_length;
@@ -50,7 +48,6 @@ typedef struct
 
 typedef struct
 {
-    pthread_t tid;
     pwm_num pwm_num;
     uint32_t freq_min;
     uint32_t freq_max;

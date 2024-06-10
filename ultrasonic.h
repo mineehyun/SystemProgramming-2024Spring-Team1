@@ -1,11 +1,8 @@
 #ifndef __ULTRASONIC_H__
 #define __ULTRASONIC_H__
 
-#include <pthread.h>
-
 typedef struct
 {
-    pthread_t tid;
     int polling_rate;
     int trig, echo;
     double speed;
