@@ -30,7 +30,7 @@ void *__rp1_thread(void *args)
         {
             pthread_exit(NULL);
         }
-        __args->tid_execute;
+        __args->tid_executing;
         pthread_t tid;
         pthread_create(&tid, NULL, execute_thread, args);
         pthread_join(tid, NULL);
@@ -90,9 +90,9 @@ void __execute_thread_finalize(void *args)
     gpio_write(__args->motor_pin, LOW);
     gpio_unexport(__args->motor_pin);
     /* Confirm `execute_thread` terminated so that another thread can run without pthread_cancel */
-    pthread_mutex_lock(&__args->lock_executed);
-    __args->tid_execute = 0;
-    pthread_mutex_unlock(&__args->lock_executed);
+    pthread_mutex_lock(&__args->lock_execute);
+    __args->tid_executing = 0;
+    pthread_mutex_unlock(&__args->lock_execute);
 }
 
 void *execute_thread(void *args)
@@ -104,19 +104,20 @@ void *execute_thread(void *args)
      * If another thread running `execute_thread`, cancel it.
      * So that overlapped calling of `execute_thread` is allowed.
      */
-    pthread_mutex_lock(&__args->lock_executed);
-    if (__args->tid_execute > 0)
+    pthread_mutex_lock(&__args->lock_execute);
+    if (__args->tid_executing > 0)
     {
-        pthread_cancel(__args->tid_execute);
-        __args->tid_execute = pthread_self();
+        pthread_cancel(__args->tid_executing);
+        __args->tid_executing = pthread_self();
     }
+    pthread_mutex_unlock(&__args->lock_execute);
+    /* Restore cancelstate */
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     /* Init Motor GPIO */
     gpio_export(__args->motor_pin);
-    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_cleanup_push(__execute_thread_finalize, args);
     gpio_set_direction(__args->motor_pin, OUT);
     gpio_write(__args->motor_pin, LOW);
-    pthread_mutex_unlock(&__args->lock_executed);
     /* Motor run! */
     gpio_write(__args->motor_pin, HIGH);
     sleep(MOTOR_DURATION);

@@ -21,11 +21,11 @@
 
 typedef struct
 {
-    pthread_t tid_execute;
+    pthread_t tid_executing;
     int sockfd_rp1;
     struct weatherResult rp2_data;
     us_thread_args *us_data;
-    pthread_mutex_t lock_rp2, lock_executed;
+    pthread_mutex_t lock_rp2, lock_execute;
     pthread_cond_t cond_executed;
     int polling_rate;
     uint8_t motor_pin;
