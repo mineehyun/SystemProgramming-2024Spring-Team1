@@ -58,7 +58,6 @@ void *siren_thread(void *args)
     pwm_export(__args->pwm_num);
     pwm_enable(__args->pwm_num);
     usleep(1000);
-    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_cleanup_push(__siren_thread_finalize, args);
     for (uint32_t __freq = __args->freq_min; __freq < __args->freq_max; __freq+=10)
     {

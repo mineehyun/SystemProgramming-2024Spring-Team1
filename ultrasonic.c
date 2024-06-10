@@ -53,7 +53,6 @@ void *us_thread(void *args)
     /* Start */
     clock_t start, end, dt;
     double distance_old, distance = 0, speed;
-    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_cleanup_push(__us_thread_finalize, args);
     while (1)
     {
