@@ -33,6 +33,16 @@ typedef enum
     B5 = 988,
 } pitch;
 
+#define SIREN_MIN 440
+#define SIREN_MAX 880
+
+// Note durations (in milliseconds)
+#define TEMPO 150 // bpm
+#define EIGHT (60000 / (TEMPO * 2))
+#define dotQUART (3 * EIGHT)
+#define QUART (2 * EIGHT)
+#define HALF (2 * QUART)
+
 typedef struct
 {
     pitch pitch;
@@ -60,7 +70,7 @@ typedef struct
  * 생각.
  * @param note
  * 뭐겠니?
- * 
+ *
  * @returns
  * 0 if success, -1 if error.
  */
@@ -68,7 +78,7 @@ int __buzzer_play_note(pwm_num pwm_num, note *note);
 
 /**
  * Thread finalize function of `buzzer_thread`.
- * 
+ *
  * @param args
  * Use type `buzzer_thread_args *`
  */
@@ -76,7 +86,7 @@ void __buzzer_thread_finalize(void *args);
 
 /**
  * Plays a score. Also set PWM pins.
- * 
+ *
  * @param args
  * Use type `buzzer_thread_args *`
  */
@@ -84,7 +94,7 @@ void *buzzer_thread(void *args);
 
 /**
  * Thread finalize function of `siren_thread`.
- * 
+ *
  * @param args
  * Use type `siren_thread_args *`
  */
@@ -92,7 +102,7 @@ void __siren_thread_finalize(void *args);
 
 /**
  * Siren thread. Also set PWM pins.
- * 
+ *
  * @param args
  * Use type `siren_thread_args *`
  */

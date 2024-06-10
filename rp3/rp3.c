@@ -135,3 +135,8 @@ void *execute_thread(void *args)
     pthread_cleanup_pop(1);
     /* gpio_write(__args->motor_pin, LOW) is in cleanup function */
 }
+
+int main(int argc, char *argv[])
+{
+    
+}

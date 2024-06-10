@@ -1,5 +1,3 @@
-#include <wiringPi.h>
-#include <wiringPiI2C.h>
 #include <stdio.h>
 #include <pthread.h>
 #include "lcd.h"
@@ -72,11 +70,7 @@ void *lcd_function(void *vargp) {
     fd = wiringPiI2CSetup(I2C_ADDR);
     lcd_init();
     while (1) {
-        int local_gas_level;
-
-        pthread_mutex_lock(&lock);
-        local_gas_level = gas_level;
-        if (local_gas_level > 230) {
+        if (gas_level > 230) {
             lcdLoc(LINE1);
             typeln("Gas! Gas! Gas!");
             lcdLoc(LINE2);
@@ -87,8 +81,7 @@ void *lcd_function(void *vargp) {
             lcdLoc(LINE2);
             typeln("You are safe now");
         }
-        pthread_mutex_unlock(&lock);
-        delay(3000);
+        usleep(3);
         ClrLcd();
     }
     return NULL;
