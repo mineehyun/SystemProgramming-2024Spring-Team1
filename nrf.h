@@ -7,9 +7,11 @@
 /* GPIO pin definition */
 #define CE 27
 #define CSN 22
+
 /* Default configs */
 #define ADDR_LENGTH 5
 #define PAYLOAD_WIDTH 32
+
 /* SPI command definition */
 typedef enum
 {
@@ -25,6 +27,7 @@ typedef enum
     W_ACK_PAYLOAD = 0b10101000, // LSB 3 bits: pipe number
     NOP = 0b11111111,
 } nrf_command;
+
 /* Registers definition */
 typedef enum
 {
@@ -55,15 +58,18 @@ typedef enum
     DYNPD = 0x1c,
     FEATURE = 0x1d,
 } nrf_register;
+
 /* STATUS register condition check bit masks */
 #define RX_DR 1 << 6 // this bit means receive done
 #define TX_DS 1 << 5 // this bit means send done
+
 /* Modes */
 typedef enum
 {
     TX_MODE = 0,
     RX_MODE = 1,
 } nrf_mode;
+
 /* CSN pin setting macro; must be used in a pair */
 #define SPI_ON() \
     do           \
