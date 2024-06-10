@@ -69,7 +69,10 @@ void *us_thread(void *args)
         speed = (distance_old - distance) / ((double)(end - start) / CLOCKS_PER_SEC);
         if (speed < 0 || 3000 < speed)
             continue;
+        /* Update speed using lock */
+        pthread_mutex_lock(&__args->lock);
         __args->speed = speed;
+        pthread_mutex_unlock(&__args->lock);
     }
     pthread_cleanup_pop(0);
 }

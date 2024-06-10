@@ -55,8 +55,10 @@ void *monitor_thread(void *args)
     while (1)
     {
         /* Fetch data */
-        pthread_mutex_lock(&__args->lock_rp2);
+        pthread_mutex_lock(&__args->us_data->lock);
         us_data_speed = __args->us_data->speed;
+        pthread_mutex_unlock(&__args->us_data->lock);
+        pthread_mutex_lock(&__args->lock_rp2);
         rp2_data = __args->rp2_data;
         pthread_mutex_unlock(&__args->lock_rp2);
         /* Manipulate threshold */

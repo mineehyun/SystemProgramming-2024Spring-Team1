@@ -29,7 +29,6 @@ typedef struct
     pthread_mutex_t lock_rp2;
     /* data from ultrasonic sensor */
     us_thread_args *us_data;
-    pthread_mutex_t lock_us;
     /* other thread configs */
     int sockfd_rp1;
     int polling_rate;
