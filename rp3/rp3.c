@@ -2,18 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 #include "../gpio.c"
 #include "../socket.c"
 #include "ultrasonic.c"
 #include "rp3.h"
 
-#define PORT_RP1 8813
-#define PORT_RP2 8823
-#define ADDRESS_RP4 "127.0.0.1"
-#define PORT_RP4 8834
-
 void *__rp1_thread(void *args)
 {
+    printf("[__rp1_thread] Start\n");
     rp3_thread_args *__args = (rp3_thread_args *)args;
     uint8_t buffer;
     int __result;
@@ -41,6 +38,7 @@ void *__rp1_thread(void *args)
 
 void *__rp2_thread(void *args)
 {
+    printf("[__rp2_thread] Start\n");
     rp3_thread_args *__args = (rp3_thread_args *)args;
     struct weatherResult buffer;
     int __result;
@@ -68,6 +66,7 @@ void *__rp2_thread(void *args)
 
 void *monitor_thread(void *args)
 {
+    printf("[monitor_thread] Start\n");
     rp3_thread_args *__args = (rp3_thread_args *)args;
     double us_data_speed, threshold;
     struct weatherResult rp2_data;
@@ -90,6 +89,8 @@ void *monitor_thread(void *args)
         {
             threshold *= SPEED_THRESHOLD_FOG_DECREASE_RATIO;
         }
+        printf("[monitor] 속도 %4.0lf 비 %d 조도 %d 온도 %d 습도 %d\n",
+                us_data_speed, rp2_data.rain, rp2_data.light, rp2_data.DHT.temp, rp2_data.DHT.humi);
         /* Check 철컹 condition */
         if (threshold < us_data_speed)
         {
@@ -97,9 +98,6 @@ void *monitor_thread(void *args)
             pthread_t tid;
             pthread_create(&tid, NULL, __execute_thread, args);
             pthread_detach(tid);
-            /* Send rp4 썸띵 */
-            uint8_t byte = 0x01;
-            write(__args->sockfd_rp4, &byte, 1);
         }
         usleep(MONITOR_INTERVAL);
     }
@@ -108,8 +106,14 @@ void *monitor_thread(void *args)
 void __execute_thread_finalize(void *args)
 {
     rp3_thread_args *__args = (rp3_thread_args *)args;
-    /* Mark there is no other thread in `__execute_thread` */
+    /* Send rp4 썸띵 only if the cancellation call is not from the another thread */
     pthread_mutex_lock(&__args->lock_tid_executing);
+    if (__args->tid_executing == 0)
+    {
+        uint8_t byte = 0x01;
+        write(__args->sockfd_rp4, &byte, 1);
+    }
+    /* Mark there is no other thread in `__execute_thread` */
     __args->tid_executing = 0;
     pthread_mutex_unlock(&__args->lock_tid_executing);
     /* Allow another thread proceed `__execute_thread` */
@@ -127,6 +131,13 @@ void *__execute_thread(void *args)
     {
         /* Cancel it */
         pthread_cancel(__args->tid_executing);
+    }
+    /* 스레드 없으면 */
+    else
+    {
+        /* Send rp4 썸띵 */
+        uint8_t byte = 0x01;
+        write(__args->sockfd_rp4, &byte, 1);
     }
     pthread_mutex_unlock(&__args->lock_tid_executing);
     /* And wait for cancellation complete */
@@ -151,7 +162,7 @@ void *__execute_thread(void *args)
     /* 도로 원상복구 */
     gpio_write(__args->cheolkeong_pin, LOW);
     gpio_write(__args->motor_pin, HIGH);
-    int __wait_length = MOTOR_DURATION * CLOCKS_PER_SEC / TEST_CANCEL_INTERVAL;
+    __wait_length = MOTOR_DURATION * CLOCKS_PER_SEC / TEST_CANCEL_INTERVAL;
     for (int i = 0; i < __wait_length; i++)
     {
         usleep(TEST_CANCEL_INTERVAL);
@@ -161,15 +172,37 @@ void *__execute_thread(void *args)
     pthread_cleanup_pop(1);
 }
 
+int sockfd_rp1, sockfd_rp2, sockfd_rp4;
+
+void handle_sigint(int sig)
+{
+    close(sockfd_rp1);
+    close(sockfd_rp2);
+    close(sockfd_rp4);
+    exit(0);
+}
+
 int main(int argc, char *argv[])
 {
+    int opt = 1;
+    // SINGINT 핸들러
+    if (signal(SIGINT, handle_sigint) == SIG_ERR)
+    {
+        perror("[main] Signal");
+        return -1;
+    }
     rp3_thread_args *args = (rp3_thread_args *)malloc(sizeof(rp3_thread_args));
     args->us_data = (us_thread_args *)malloc(sizeof(us_thread_args));
     args->cheolkeong_pin = 17;
     args->motor_pin = 27;
-    args->sockfd_rp1 = socket_server(PORT_RP1);
-    args->sockfd_rp2 = socket_server(PORT_RP2);
-    args->sockfd_rp4 = socket_client(ADDRESS_RP4, 8834);
+    args->us_data->echo = 5;
+    args->us_data->trig = 6;
+    args->sockfd_rp1 = sockfd_rp1 = socket_server(8883);
+    setsockopt(sockfd_rp1, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    args->sockfd_rp2 = sockfd_rp2 = socket_server(8882);
+    setsockopt(sockfd_rp2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    args->sockfd_rp4 = sockfd_rp4 = socket_server(8884);
+    setsockopt(sockfd_rp4, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     pthread_mutex_init(&args->lock_tid_executing, NULL);
     pthread_mutex_init(&args->lock_motor, NULL);
     pthread_mutex_init(&args->lock_rp2_data, NULL);
@@ -178,30 +211,16 @@ int main(int argc, char *argv[])
     gpio_export(args->motor_pin);
     gpio_set_direction(args->cheolkeong_pin, OUT);
     gpio_set_direction(args->motor_pin, OUT);
-
-    // /* Dummy datas */
-    // struct weatherResult rp2_data = 
-    // {
-    //     .DHT = 
-    //     {
-    //         .humi = 30,
-    //         .temp = 24,
-    //     },
-    //     .light = 300,
-    //     .rain = 0,
-    // };
-    // args->rp2_data = rp2_data;
-    // /* Dummy speed */
-    // args->us_data->speed = 700;
-
     /* Create theads */
-    pthread_t tid_rp1, tid_rp2, tid_monitor;
+    pthread_t tid_rp1, tid_rp2, tid_monitor, tid_us;
     pthread_create(&tid_rp1, NULL, __rp1_thread, args);
     pthread_detach(tid_rp1);
     pthread_create(&tid_rp2, NULL, __rp2_thread, args);
     pthread_detach(tid_rp2);
-    /* 3초기다렸다가 모니터링시작해 안그럼 segfault 남 */
-    sleep(3);
+    pthread_create(&tid_us, NULL, us_thread, args->us_data);
+    pthread_detach(tid_us);
+    /* 기다렸다가 모니터링시작해 안그럼 segfault 남 */
+    sleep(1);
     pthread_create(&tid_monitor, NULL, monitor_thread, args);
     pthread_join(tid_monitor, NULL);
     /* Finalize */

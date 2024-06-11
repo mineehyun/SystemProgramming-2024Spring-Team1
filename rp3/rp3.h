@@ -6,14 +6,14 @@
 #include "../rp2/rp2.h"
 
 /* Speed threshold configs */
-#define SPEED_THRESHOLD_DEFAULT 1000
+#define SPEED_THRESHOLD_DEFAULT 4000
 #define SPEED_THRESHOLD_WET_DECREASE_RATIO 0.8 // if wet, threshold *= 0.8
 #define SPEED_THRESHOLD_FOG_DECREASE_RATIO 0.7 // if fog, threshold *= 0.7
 #define LIGHT_THRESHOLD 250 // determine fog state
 #define HUMID_THRESHOLD 50 // determine fog state
 
 /* Duration to activate motor */
-#define CHOELKEONG_DURATION 10 // 철컹 지속시간(초)
+#define CHOELKEONG_DURATION 15 // 철컹 지속시간(초)
 #define MOTOR_DURATION 10 // 모터 지속시간(초)
 #define TEST_CANCEL_INTERVAL 100000 // check cancel every 0.1s
 
