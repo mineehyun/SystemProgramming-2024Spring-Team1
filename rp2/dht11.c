@@ -16,8 +16,6 @@
 #include <unistd.h>
 
 #define MAXTIMINGS 100
-// #define AM2302 22
-#define PIN 4
 
 int readDHT(int pin, struct DHTresult* dhtResult);
  
@@ -26,7 +24,7 @@ int dht_function(struct DHTresult* dhtResult)
   if (!bcm2835_init())
         return 1;
   // printf("Using pin #%d\n", PIN);
-  readDHT(PIN, dhtResult);
+  readDHT(4, dhtResult);
   return 0;
 }
 int bits[250], data[100];
@@ -78,22 +76,12 @@ int readDHT(int pin, struct DHTresult* dhtResult) {
     printf("bit %d: %d (%d)\n", i-2, bits[i+1], bits[i+1] > 200);
   }
 #endif
-
-  // printf("Data (%d): 0x%x 0x%x 0x%x 0x%x 0x%x\n", j, data[0], data[1], data[2], data[3], data[4]);
-
+  printf("Data (%d): 0x%x 0x%x 0x%x 0x%x 0x%x\n", j, data[0], data[1], data[2], data[3], data[4]);
   if ((j >= 39) &&
       (data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) ) {
-    // printf("Temp = %d *C, Hum = %d \%\n", data[2], data[0]);
+    dhtResult -> humi = data[0];
+    dhtResult -> temp = data[2];
     return 1;
   }
-  else if (j==39){
-    // printf("39\n");
-    j++;
-    data[j/8] <<= 1;
-    data[j/8] |= 1;
-    // printf("Temp = %d *C, Hum = %d \%\n", data[2], data[0]);
-  }
-  dhtResult -> humi = data[0];
-  dhtResult -> temp = data[2];
   return 0;
 }
