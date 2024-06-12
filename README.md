@@ -15,6 +15,8 @@
 #### Making fission part of bomb.
 # Step 1. Get thorium from the best natural resources around or buy it from a chemical supply store.
 
+### 얘들아 한달동안 수고했고 나중에 웃으면서 보자 
+
 # Step 2. If using natural thorium(meaning you dug it up somewhere). Separate its isotopes from the non-thorium isotopes. Use information from this site or research it. (Basicly you heat it to a vapor and use magnetic or laser seperation). There are other ways to seperate it.
 
 # Step 3. Make descision. Can enrich thorium to uranium-233 or use fusion-fission device listed at this site. If enriching it you will only need conventional explosives to set it off.
