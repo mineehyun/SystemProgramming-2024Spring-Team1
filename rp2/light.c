@@ -19,6 +19,7 @@ void* light_function(void* light) {
   int* light_ptr = (int*)light;
   light_ptr = (int*)light;
   *light_ptr= value;
+  // free(light_ptr);
 
   return NULL;
 }
