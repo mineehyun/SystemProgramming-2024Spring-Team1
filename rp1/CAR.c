@@ -76,7 +76,7 @@ void *motor_control_thread(void *arg)
 
       setMotor(FORWARD);
       sleep(3);
-      // setMotor(BACKWARD); // 되나??????
+      // setMotor(BACKWARD);
       // sleep(10);
 
       setMotor(STOP);
@@ -94,39 +94,32 @@ void *motor_control_thread(void *arg)
   return NULL;
 }
 
-void *emergency_signal_thread(void *arg) // 긴급 차량 버튼이 눌리면 서버 소켓과 통신 & 긴급 차량 버튼이 눌리면 부저 작동
+void *emergency_signal_thread(void *__sock_fd) // 긴급 차량 버튼이 눌리면 서버 소켓과 통신 & 긴급 차량 버튼이 눌리면 부저 작동
 {
+  int *sock_fd = (int *)__sock_fd;
   gpio_export(EMERGENCY_BUTTON_PIN);
   gpio_set_direction(EMERGENCY_BUTTON_PIN, INPUT);
-
-  pwm_export(SIREN);
-  pwm_enable(SIREN);
-
-  int client_sock;
-  gpio_value button2_state;
-  gpio_value prev_button2_state = HIGH;
+  gpio_value button2_state = LOW;
+  gpio_value prev_button2_state;
 
   while (1)
   {
-    gpio_read(EMERGENCY_BUTTON_PIN, &button2_state);
+    if (gpio_read(EMERGENCY_BUTTON_PIN, &button2_state) == -1)
+    {
+      perror("gpio_read");
+    }
 
     // 버튼이 눌렸을 때
     // if ( (button2_state == LOW && prev_button2_state == HIGH) || button2_state == HIGH && prev_button2_state == LOW)
-    if (button2_state != prev_button2_state)
+    if (button2_state == HIGH)
     {
+
       // (1) 서버 소켓에 메세지 전달
-      // client_sock = socket_client("192.168.14.4", DEFAULT_PORT);
-      // if (client_sock != -1)
-      // {
-      //   char *client_message = "Emergency vehicles are approaching!\n";
-      //   dprintf(client_sock, "%s", client_message);
-      // write(client_sock, 0, 1);
-      //   close(client_sock); // 소켓 사용 후 닫기
-      // }
-      // else
-      // {
-      //   perror("socket_client failed");
-      // }
+      int buf = 0;
+      if (write(*sock_fd, &buf, 1) == -1)
+      {
+        perror("[write]");
+      }
 
       // 사이렌 작동
       siren_thread_args args =
@@ -162,6 +155,7 @@ void *emergency_signal_thread(void *arg) // 긴급 차량 버튼이 눌리면 �
 int main(void)
 {
   pthread_t motor_thread, emergency_thread;
+  int sock_fd = socket_client("192.168.14.10", 8883);
 
   if (pthread_create(&motor_thread, NULL, motor_control_thread, NULL) != 0)
   {
@@ -169,7 +163,7 @@ int main(void)
     exit(EXIT_FAILURE);
   }
 
-  if (pthread_create(&emergency_thread, NULL, emergency_signal_thread, NULL) != 0)
+  if (pthread_create(&emergency_thread, NULL, emergency_signal_thread, &sock_fd) != 0)
   {
     perror("pthread_create");
     exit(EXIT_FAILURE);
@@ -186,6 +180,6 @@ int main(void)
     perror("pthread_join");
     exit(EXIT_FAILURE);
   }
-
+  close(sock_fd);
   return 0;
 }
