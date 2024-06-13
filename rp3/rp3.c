@@ -194,11 +194,8 @@ int main(int argc, char *argv[])
     /* Create theads */
     pthread_t tid_rp1, tid_rp2, tid_monitor, tid_us;
     pthread_create(&tid_rp1, NULL, __rp1_thread, args);
-    pthread_detach(tid_rp1);
     pthread_create(&tid_rp2, NULL, __rp2_thread, args);
-    pthread_detach(tid_rp2);
     pthread_create(&tid_us, NULL, us_thread, args->us_data);
-    pthread_detach(tid_us);
     /* 기다렸다가 모니터링시작해 안그럼 segfault 남 */
     sleep(1);
     pthread_create(&tid_monitor, NULL, monitor_thread, args);
