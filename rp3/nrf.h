@@ -89,7 +89,7 @@ typedef struct
 } nrf_args;
 
 /**
- * Write single `byte` to `reg`. Do not manipulate CSN pin.
+ * Write single `byte` to `reg`. Manipulates not CSN pin.
  *
  * @returns
  * 0 if success, -1 if error.
@@ -97,7 +97,7 @@ typedef struct
 int __nrf_write_reg(nrf_args *nrf, nrf_register reg, uint8_t byte);
 
 /**
- * Read single `*byte` from `reg`. Do not manipulate CSN pin.
+ * Read single `*byte` from `reg`. Manipulates not CSN pin.
  *
  * @returns
  * 0 if success, -1 if error.
@@ -134,7 +134,7 @@ int __nrf_receive(nrf_args *nrf);
 void __nrf_finalize(nrf_args *nrf);
 
 /**
- * Used on debugging. Do not manipulate CSN pin.
+ * Used on debugging. Manipulates not CSN pin.
  */
 void __nrf_dump_registers(nrf_args *nrf);
 
