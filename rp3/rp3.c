@@ -172,37 +172,17 @@ void *__execute_thread(void *args)
     pthread_cleanup_pop(1);
 }
 
-int sockfd_rp1, sockfd_rp2, sockfd_rp4;
-
-void handle_sigint(int sig)
-{
-    close(sockfd_rp1);
-    close(sockfd_rp2);
-    close(sockfd_rp4);
-    exit(0);
-}
-
 int main(int argc, char *argv[])
 {
-    int opt = 1;
-    // SINGINT 핸들러
-    if (signal(SIGINT, handle_sigint) == SIG_ERR)
-    {
-        perror("[main] Signal");
-        return -1;
-    }
     rp3_thread_args *args = (rp3_thread_args *)malloc(sizeof(rp3_thread_args));
     args->us_data = (us_thread_args *)malloc(sizeof(us_thread_args));
     args->cheolkeong_pin = 17;
     args->motor_pin = 27;
     args->us_data->echo = 5;
     args->us_data->trig = 6;
-    args->sockfd_rp1 = sockfd_rp1 = socket_server(8883);
-    setsockopt(sockfd_rp1, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    args->sockfd_rp2 = sockfd_rp2 = socket_server(8882);
-    setsockopt(sockfd_rp2, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    args->sockfd_rp4 = sockfd_rp4 = socket_server(8884);
-    setsockopt(sockfd_rp4, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    args->sockfd_rp1 = socket_server(8883);
+    args->sockfd_rp2 = socket_server(8882);
+    args->sockfd_rp4 = socket_server(8884);
     pthread_mutex_init(&args->lock_tid_executing, NULL);
     pthread_mutex_init(&args->lock_motor, NULL);
     pthread_mutex_init(&args->lock_rp2_data, NULL);
