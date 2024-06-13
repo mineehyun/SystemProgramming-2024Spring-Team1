@@ -2,14 +2,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wiringPi.h>
 #include "../pwm.c"
-#include "lcd.c"
-#include "gas.c"
-#include "buzzer.c"
 #include "../socket.c"
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include "../buzzer.c"
+#include "../socket.c"
+#include "gas.c"
+#include "rgb_led.c"
 
 int gas_level;
 pthread_mutex_t lock;
@@ -25,10 +23,7 @@ pthread_mutex_t lock;
 volatile int shut = 0;
 
 int main(void)
-{   
-    wiringPiSetup();
-    mcp3004Setup(BASE, SPI_CHAN);
-
+{
     // int sock = socket_client("192.168.14.10", 8884);
     uint8_t buffer;
     int __result;
@@ -38,8 +33,11 @@ int main(void)
         pthread_mutex_init(&lock, NULL);
 
         pthread_create(&thread_id_gas, NULL, gas_function, NULL);
-        pthread_create(&thread_id_lcd, NULL, lcd_function, NULL);
+        // pthread_create(&thread_id_lcd, NULL, lcd_function, NULL);
+        pthread_create(&thread_id_rgb_led, NULL, rgb_led_function, NULL);
         pthread_join(thread_id_gas, NULL);
+        // pthread_join(thread_id_lcd, NULL);
+        pthread_join(thread_id_rgb_led, NULL);
     }
     return 0;
 }
