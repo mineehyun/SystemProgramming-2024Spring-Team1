@@ -2,7 +2,11 @@
 #include <wiringPiI2C.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "lcd.h"
+//#include "gpio.h"
+#include <stdlib.h>
 
 #define I2C_ADDR 0x27
 #define LCD_CHR 1
@@ -16,6 +20,9 @@ extern int fd;  // File descriptor for the I2C connection
 extern int gas_level;  // Shared variable for the gas level
 extern pthread_mutex_t lock;  // Mutex for synchronization
 
+// #define GPIO_PATH "/sys/class/gpio" //추가
+// #define GPIO_PIN "12" //추가 
+
 // Function prototypes
 void lcd_init(void);
 void lcd_byte(int bits, int mode);
@@ -24,6 +31,8 @@ void lcdLoc(int line);
 void ClrLcd(void);
 void typeln(const char *s);
 void *lcd_function(void *vargp);
+int gaswas = 0;
+
 
 void lcd_init() {
     lcd_byte(0x33, LCD_CMD);  // Function set
@@ -76,12 +85,27 @@ void *lcd_function(void *vargp) {
 
         pthread_mutex_lock(&lock);
         local_gas_level = gas_level;
-        if (local_gas_level > 230) {
+        if (local_gas_level > 300) {
+            
+            // gpio_export(12);
+            // // Set GPIO direction to output
+            // gpio_direction(12, "out");
+            // gpio_write(12, 1); //환풍기 회전 
+            // gaswas = 1;
+
+
             lcdLoc(LINE1);
             typeln("Gas! Gas! Gas!");
             lcdLoc(LINE2);
             typeln("Gas! Gas! Gas!");
         } else {
+
+            // if(gaswas == 1){
+            //     gpio_write(12, 0);
+            //     gpio_unexport(12);
+            //     gaswas = 0;
+            // }
+
             lcdLoc(LINE1);
             typeln("Welcome!!!!");
             lcdLoc(LINE2);
@@ -90,6 +114,7 @@ void *lcd_function(void *vargp) {
         pthread_mutex_unlock(&lock);
         delay(3000);
         ClrLcd();
+
     }
     return NULL;
 }
