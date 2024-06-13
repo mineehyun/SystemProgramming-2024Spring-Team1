@@ -9,16 +9,17 @@
 #include <pthread.h>
 #include "gas.h"
 
+extern int gas_level;  // Shared variable for the gas level
+extern int gas_threshold;
+extern pthread_mutex_t lock;  // Mutex for synchronization
+
 #define DEVICE "/dev/spidev0.0"
 static uint8_t MODE = 0;
 static uint8_t BITS = 8;
 static uint32_t CLOCK = 1000000;
 static uint16_t DELAY = 5;
 
-extern int gas_level;  // Shared variable for the gas level
-extern pthread_mutex_t lock;  // Mutex for synchronization
-
-// SPI device sample code
+// SPI sample code
 static int prepare(int fd) {
   if (ioctl(fd, SPI_IOC_WR_MODE, &MODE) == -1) {
     perror("Can't set MODE");
@@ -53,7 +54,7 @@ int readadc(int fd, uint8_t channel) {
   struct spi_ioc_transfer tr = {
       .tx_buf = (unsigned long)tx,
       .rx_buf = (unsigned long)rx,
-      .len = ARRAY_SIZE(tx),
+      .len = 3,
       .delay_usecs = DELAY,
       .speed_hz = CLOCK,
       .bits_per_word = BITS,
@@ -78,14 +79,28 @@ void *gas_function(void *vargp) {
         perror("Device prepare error");
         return NULL;
     }
-    // gas level detection
+    // 부저조용해
+    pwm_export(0);
+    pwm_unexport(0);
+    // gas detection
     int local_gas_level;
-    int threshold = 300;  // Threshold for gas detection
     while (1) {
         local_gas_level = readadc(spi_fd, 0);
         pthread_mutex_lock(&lock);
         gas_level = local_gas_level;  // Update the shared variable within a lock
         pthread_mutex_unlock(&lock);
+        if (local_gas_level > gas_threshold)
+        {
+          pthread_t pt;
+          siren_thread_args args =
+          {
+            .freq_min = 500,
+            .freq_max = 1000,
+            .pwm_num = 0,
+          };
+          pthread_create(&pt, NULL, siren_thread, &args);
+          pthread_join(pt, NULL);
+        }
         printf("Current gas value: %d\n", gas_level);
         usleep(100000);
     }

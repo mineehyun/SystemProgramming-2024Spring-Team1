@@ -12,6 +12,7 @@
 #define BLUE 22
 
 extern int gas_level;
+extern int gas_threshold;
 extern pthread_mutex_t lock;
 
 void *rgb_led_function(void *vargp)
@@ -28,13 +29,15 @@ void *rgb_led_function(void *vargp)
         pthread_mutex_lock(&lock);
         local_gas_level = gas_level;
         pthread_mutex_unlock(&lock);
-        if (local_gas_level > 300)
+        if (local_gas_level > gas_threshold)
         {
             // Flash yellow rapidly
             gpio_write(RED, 1);
             gpio_write(GREEN, 1);
             usleep(250000); // 0.25 seconds on
-            turn_off_all();
+            gpio_write(RED, 0);
+            gpio_write(GREEN, 0);
+            gpio_write(BLUE, 0);
             usleep(250000); // 0.25 seconds off
         }
         else
