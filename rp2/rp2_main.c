@@ -1,7 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <unistd.h> 
 #include "rp2.h"
 #include "pi2_weatherThreads.c"
 
@@ -11,14 +11,10 @@
 #define C_R 23
 #define time_D 5
 
-pthread_mutex_t flag_lock, button_lock;
-int flag, weak_button = 0;
+int flag, weak_button = 0; 
 
-void *human(int time)
-{
-  pthread_mutex_lock(&flag_lock);
+void* human(int time){
   flag = 1;
-  pthread_mutex_unlock(&flag_lock);
   GPIOWrite(HR, 0);
   GPIOWrite(HG, 1);
   sleep(time);
@@ -28,11 +24,8 @@ void *human(int time)
   return NULL;
 }
 
-void *car(int time)
-{
-  pthread_mutex_lock(&flag_lock);
+void* car(int time){
   flag = 0;
-  pthread_mutex_unlock(&flag_lock);
   GPIOWrite(C_R, 0);
   GPIOWrite(C_G, 1);
   sleep(time);
@@ -42,30 +35,23 @@ void *car(int time)
   return NULL;
 }
 
-void *weak_function(void *args)
-{
-  GPIOUnexport(21);
-  GPIOExport(21);
-  GPIODirection(21, 0);
+void* weak_function(void *args){
+    GPIOUnexport(21);
+    GPIOExport(21);
+    GPIODirection(21, 0);
   while (1)
   {
-    if (GPIORead(21))
-    {
-      pthread_mutex_lock(&button_lock);
-      weak_button = 1;
-      pthread_mutex_unlock(&button_lock);
-    }
+    if (GPIORead(21)) weak_button = 1;
     usleep(10);
   }
-  GPIOUnexport(21);
+    GPIOUnexport(21);
 }
 
-void *signal_function(void *weatherresult)
-{
-  struct weatherResult *weather = (struct weatherResult *)weatherresult;
-  pthread_mutex_lock(&flag_lock);
-  flag = 1;
-  pthread_mutex_unlock(&flag_lock);
+
+void* signal_function(void* weatherresult){
+  struct weatherResult* weather = (struct weatherResult*) weatherresult;
+
+  int flag = 1;
   GPIOExport(HG);
   GPIOExport(HR);
   GPIODirection(HG, 1);
@@ -76,86 +62,68 @@ void *signal_function(void *weatherresult)
   GPIODirection(C_G, 1);
   GPIOWrite(C_R, 1);
   GPIOWrite(HR, 1);
-  while (1)
-  {
-    // if condition -> call proper function
-    pthread_mutex_lock(&button_lock);
-    int _weak_button = weak_button;
-    pthread_mutex_unlock(&button_lock);
-    if (_weak_button)
-    {
+  while (1){
+    // if condition -> call proper function 
+    
+    if (weak_button){
       printf("weak_button\n");
-      pthread_mutex_lock(&flag_lock);
-      int _flag = flag;
-      pthread_mutex_unlock(&flag_lock);
-      if (_flag == 0)
-      {
-        human(time_D * 1.5);
+      if (flag == 0){
+        human(time_D * 1.5);  
         car(time_D);
       }
-      else
-      {
+      else{
         car(time_D * 0.8);
-        human(time_D * 1.5);
+        human(time_D * 1.5);  
         car(time_D);
       }
-      pthread_mutex_lock(&button_lock);
       weak_button = 0;
-      pthread_mutex_unlock(&button_lock);
     }
-    else if (weather->rain)
-    {
+    else if (weather -> rain){
       human((int)(time_D * 1.5));
-      car((int)(time_D * 1.2));
+      car ((int)(time_D * 1.2));
     }
-    else if (weather->DHT.humi > 80 && weather->DHT.temp > 30)
-    {
+    else if (weather -> DHT.humi > 80 && weather -> DHT.temp > 30){
       printf("bad weather\n");
       human((int)(time_D * 1.2));
-      car((int)(time_D * 1.2));
+      car ((int)(time_D * 1.2));
     }
-    else if (weather->light >= 800)
-    {
+    else if (weather-> light >= 800){
       printf("파라솔을 펼치시기 바랍니다 개더우니깐요\n");
-      human(time_D);
+      human(time_D);  
       car(time_D);
     }
-    else
-    {
-      printf("else\n");
-      human(time_D);
-      car(time_D);
+    else {
+    printf("else\n");
+    human(time_D);  
+    car(time_D);
     }
   }
 
-  GPIOUnexport(HG);
-  GPIOUnexport(HR);
-  GPIOUnexport(C_R);
-  GPIOUnexport(C_G);
+GPIOUnexport(HG);
+GPIOUnexport(HR);
+GPIOUnexport(C_R);
+GPIOUnexport(C_G);
 }
 
-int main()
+int main() 
 {
-  pthread_t pthread[3];
+  pthread_t pthread[3]; 
   int thr_id;
   int status;
   struct weatherResult *weatherresult = (struct weatherResult *)malloc(sizeof(struct weatherResult));
 
   thr_id = pthread_create(&pthread[0], NULL, weak_function, NULL);
-  if (thr_id < 0)
-  {
+  if (thr_id < 0) {
     perror("thread1 create error : ");
     exit(0);
   }
   thr_id = pthread_create(&pthread[1], NULL, signal_function, weatherresult);
-  if (thr_id < 0)
-  {
+  if (thr_id < 0) {
     perror("thread2 create error : ");
     exit(0);
   }
   thr_id = pthread_create(&pthread[2], NULL, weatherThread, weatherresult);
-  if (thr_id < 0)
-  {
+  if (thr_id < 0) {
     perror("thread3 create error : ");
     exit(0);
   }
