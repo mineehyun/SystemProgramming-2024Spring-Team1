@@ -28,14 +28,12 @@ int __buzzer_play_note(pwm_num pwm_num, note *note)
 void __buzzer_thread_finalize(void *args)
 {
     buzzer_thread_args *__args = (buzzer_thread_args *)args;
-    pwm_unexport(__args->pwm_num);
     free(__args->score);
 }
 
 void *buzzer_thread(void *args)
 {
     buzzer_thread_args *__args = (buzzer_thread_args *)args;
-    pwm_export(__args->pwm_num);
     pthread_cleanup_push(__buzzer_thread_finalize, args);
     pwm_enable(__args->pwm_num);
     usleep(1000);
@@ -47,17 +45,9 @@ void *buzzer_thread(void *args)
     pthread_cleanup_pop(1);
 }
 
-void __siren_thread_finalize(void *args)
-{
-    siren_thread_args *__args = (siren_thread_args *)args;
-    pwm_unexport(__args->pwm_num);
-}
-
 void *siren_thread(void *args)
 {
     siren_thread_args *__args = (siren_thread_args *)args;
-    pwm_export(__args->pwm_num);
-    pthread_cleanup_push(__siren_thread_finalize, args);
     pwm_enable(__args->pwm_num);
     usleep(1000);
     for (uint32_t __freq = __args->freq_min; __freq < __args->freq_max; __freq+=10)
@@ -79,5 +69,4 @@ void *siren_thread(void *args)
         __buzzer_play_note(__args->pwm_num, &__note);
     }
     pwm_disable(__args->pwm_num);
-    pthread_cleanup_pop(1);
 }

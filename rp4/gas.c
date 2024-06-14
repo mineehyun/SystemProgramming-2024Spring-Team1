@@ -91,31 +91,31 @@ void *gas_function(void *vargp)
     return NULL;
   }
   // Welcome LG Jingle
-  // int melody[] = {
-  //     D5, G5, F5, E5, D5, B4,
-  //     C5, D5, E5, A4, B4, C5, B4, D5,
-  //     D5, Gs5, F5, E5, D5, G5,
-  //     G5, A5, G5, F5, E5, F5, G5};
-  // int durations[] = {
-  //     dotQUART, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
-  //     EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
-  //     dotQUART, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
-  //     EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, HALF};
-  // note *score = (note *)malloc(sizeof(note) * 27);
-  // for (int i = 0; i < 27; i++)
-  // {
-  //   score[i].duration = durations[i];
-  //   score[i].pitch = melody[i];
-  // }
-  // pthread_t pt;
-  // buzzer_thread_args args =
-  //     {
-  //         .pwm_num = 0,
-  //         .score = score,
-  //         .score_length = 27,
-  //     };
-  // pthread_create(&pt, NULL, buzzer_thread, &args);
-  // pthread_join(pt, NULL);
+  int melody[] = {
+      D5, G5, F5, E5, D5, B4,
+      C5, D5, E5, A4, B4, C5, B4, D5,
+      D5, Gs5, F5, E5, D5, G5,
+      G5, A5, G5, F5, E5, F5, G5};
+  int durations[] = {
+      dotQUART, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
+      EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
+      dotQUART, EIGHT, EIGHT, EIGHT, dotQUART, dotQUART,
+      EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, EIGHT, HALF};
+  note *score = (note *)malloc(sizeof(note) * 27);
+  for (int i = 0; i < 27; i++)
+  {
+    score[i].duration = (double)durations[i] / 1000;
+    score[i].pitch = melody[i];
+  }
+  pthread_t thread_id_buzzer;
+  buzzer_thread_args args =
+      {
+          .pwm_num = 0,
+          .score = score,
+          .score_length = 27,
+      };
+  pwm_export(0);
+  pthread_create(&thread_id_buzzer, NULL, buzzer_thread, &args);
   // gas detection
   int local_gas_level;
   while (1)
@@ -126,18 +126,20 @@ void *gas_function(void *vargp)
     pthread_mutex_unlock(&lock);
     if (local_gas_level > gas_threshold)
     {
-      pthread_t pt;
+      pthread_t thread_id_siren;
       siren_thread_args args =
           {
               .freq_min = 500,
               .freq_max = 1000,
               .pwm_num = 0,
           };
-      pthread_create(&pt, NULL, siren_thread, &args);
-      pthread_join(pt, NULL);
+      pthread_cancel(thread_id_buzzer);
+      pthread_create(&thread_id_siren, NULL, siren_thread, &args);
+      pthread_join(thread_id_siren, NULL);
     }
     printf("Current gas value: %d\n", gas_level);
     usleep(100000);
   }
+  pwm_unexport(0);
   return NULL;
 }

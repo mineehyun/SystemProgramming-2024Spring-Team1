@@ -14,15 +14,6 @@ int gas_level;
 int gas_threshold;
 pthread_mutex_t lock;
 
-#define TEMPO 150 // beats per minute
-#define EIGHT (60000 / (TEMPO * 2))
-#define dotQUART (3 * EIGHT) // duration of eighth note in ms
-#define QUART (2 * EIGHT)    // Quarter note duration in ms
-#define HALF (2 * QUART)
-
-int gas_level;
-pthread_mutex_t lock;
-
 int main(int argc, char *argv[])
 {
     // set threshold
