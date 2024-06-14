@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
-#include "../socket.h"
+#include "socket.h"
 
 int socket_server(uint32_t port)
 {

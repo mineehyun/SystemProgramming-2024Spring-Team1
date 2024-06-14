@@ -11,10 +11,13 @@
 #define C_R 23
 #define time_D 5
 
+pthread_mutex_t flag_lock, weak_lock;
 int flag, weak_button = 0; 
 
 void* human(int time){
+  pthread_mutex_lock(&flag_lock);
   flag = 1;
+  pthread_mutex_unlock(&flag_lock);
   GPIOWrite(HR, 0);
   GPIOWrite(HG, 1);
   sleep(time);
@@ -25,7 +28,9 @@ void* human(int time){
 }
 
 void* car(int time){
+  pthread_mutex_lock(&flag_lock);
   flag = 0;
+  pthread_mutex_unlock(&flag_lock);
   GPIOWrite(C_R, 0);
   GPIOWrite(C_G, 1);
   sleep(time);
@@ -36,22 +41,28 @@ void* car(int time){
 }
 
 void* weak_function(void *args){
-    GPIOUnexport(21);
-    GPIOExport(21);
-    GPIODirection(21, 0);
+    GPIOUnexport(25);
+    GPIOExport(25);
+    GPIODirection(25, 0);
   while (1)
   {
-    if (GPIORead(21)) weak_button = 1;
-    usleep(10);
+    if (GPIORead(25)) 
+    {
+      pthread_mutex_lock(&weak_lock);
+      weak_button = 1;
+      pthread_mutex_unlock(&weak_lock);
+    }
+    usleep(10000);
   }
-    GPIOUnexport(21);
+    GPIOUnexport(25);
 }
 
 
 void* signal_function(void* weatherresult){
   struct weatherResult* weather = (struct weatherResult*) weatherresult;
-
-  int flag = 1;
+  pthread_mutex_lock(&flag_lock);
+  flag = 1;
+  pthread_mutex_unlock(&flag_lock);
   GPIOExport(HG);
   GPIOExport(HR);
   GPIODirection(HG, 1);
@@ -64,10 +75,15 @@ void* signal_function(void* weatherresult){
   GPIOWrite(HR, 1);
   while (1){
     // if condition -> call proper function 
-    
-    if (weak_button){
+    pthread_mutex_lock(&weak_lock);
+    int _weak_button = weak_button;
+    pthread_mutex_unlock(&weak_lock);
+    if (_weak_button){
       printf("weak_button\n");
-      if (flag == 0){
+      pthread_mutex_lock(&flag_lock);
+      int _flag = flag;
+      pthread_mutex_unlock(&flag_lock);
+      if (_flag == 0){
         human(time_D * 1.5);  
         car(time_D);
       }
@@ -76,7 +92,9 @@ void* signal_function(void* weatherresult){
         human(time_D * 1.5);  
         car(time_D);
       }
+      pthread_mutex_lock(&weak_lock);
       weak_button = 0;
+      pthread_mutex_unlock(&weak_lock);
     }
     else if (weather -> rain){
       human((int)(time_D * 1.5));
@@ -112,6 +130,9 @@ int main()
   int status;
   struct weatherResult *weatherresult = (struct weatherResult *)malloc(sizeof(struct weatherResult));
 
+  pthread_mutex_init(&flag_lock, NULL);
+  pthread_mutex_init(&weak_lock, NULL);
+
   thr_id = pthread_create(&pthread[0], NULL, weak_function, NULL);
   if (thr_id < 0) {
     perror("thread1 create error : ");
@@ -132,6 +153,9 @@ int main()
   pthread_join(pthread[1], NULL);
   pthread_join(pthread[2], NULL);
   free(weatherresult);
+  
+  pthread_mutex_destroy(&flag_lock);
+  pthread_mutex_destroy(&weak_lock);
 
   return 0;
 }

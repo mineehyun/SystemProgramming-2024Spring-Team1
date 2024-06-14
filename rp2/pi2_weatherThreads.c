@@ -6,7 +6,7 @@
 #include "rain.c"
 #include "dht11.c"
 #include "light.c"
-#include "socket.c"
+#include "../socket.c"
 
 #define getWeatherTimeGap 5
 void *weatherThread(void *__weatherresult)
