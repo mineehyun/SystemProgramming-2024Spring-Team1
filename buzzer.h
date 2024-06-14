@@ -3,6 +3,12 @@
 
 #include "pwm.h"
 
+#define TEMPO 150  // beats per minute
+#define EIGHT (60000 / (TEMPO * 2))
+#define dotQUART (3 * EIGHT)  // duration of eighth note in ms
+#define QUART (2 * EIGHT)  // Quarter note duration in ms
+#define HALF (2 * QUART)
+
 typedef enum
 {
     B3 = 247,

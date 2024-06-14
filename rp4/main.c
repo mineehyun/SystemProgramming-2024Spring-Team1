@@ -11,7 +11,7 @@
 #include "rgb_led.c"
 
 int gas_level;
-int gas_threshold = 200;
+int gas_threshold;
 pthread_mutex_t lock;
 
 #define TEMPO 150 // beats per minute
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     //     }
     // }
 
-    pthread_t thread_id_gas, thread_id_lcd, thread_id_buzzer, thread_id_rgb_led;
+    pthread_t thread_id_gas, thread_id_lcd, thread_id_rgb_led;
     pthread_mutex_init(&lock, NULL);
     pthread_create(&thread_id_gas, NULL, gas_function, NULL);
     pthread_create(&thread_id_lcd, NULL, lcd_function, NULL);
