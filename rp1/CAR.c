@@ -66,7 +66,7 @@ void *motor_control_thread(void *arg)
   gpio_value button1_state = LOW;
   gpio_value prev_button1_state = LOW;
 
-  gpio_value value;
+  //gpio_value value;
 
   while (1)
   {
