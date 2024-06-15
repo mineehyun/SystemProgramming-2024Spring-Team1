@@ -23,8 +23,7 @@ int dht_function(struct DHTresult *dhtResult)
 {
   if (!bcm2835_init())
     return 1;
-  // printf("Using pin #%d\n", PIN);
-  readDHT(4, dhtResult);
+  readDHT(26, dhtResult);
   return 0;
 }
 int bits[250], data[100];
