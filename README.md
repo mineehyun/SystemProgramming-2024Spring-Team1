@@ -32,3 +32,6 @@
 # Step 8. Can make lithium, tritium, deuterium, thorium, uranium-233 into a compound powder if want. see compound section of this site for that.
 
 Step 9 From above decisions construct nuclear device. if using natural thorium construct fusion-fission device. Will need to decide what to use for a spark plug. Plain liquid or solid hydrogen might be ok. If using lithium6-deuterium construct fusion device but we will not need plasma because the fission device will set it off but we will still need a sparkplug. See fission and fusion devices for more information. If using uranium-233 only need explosives to set it off. If using tritium-deuterium just put it beside the fission device it will go off on its own when the fission device explodes. No sparkplug will be needed with tritium-deterium device just a fission device.
+
+쁀뿡뿡뿡뿡뿡
+가스센서 작동
