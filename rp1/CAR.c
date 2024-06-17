@@ -66,7 +66,7 @@ void *motor_control_thread(void *arg)
   gpio_value button1_state = LOW;
   gpio_value prev_button1_state = LOW;
 
-  //gpio_value value;
+  gpio_value value;
 
   while (1)
   {
@@ -100,27 +100,20 @@ void *emergency_signal_thread(void *__sock_fd) // 긴급 차량 버튼이 눌리
   gpio_export(EMERGENCY_BUTTON_PIN);
   gpio_set_direction(EMERGENCY_BUTTON_PIN, INPUT);
   gpio_value button2_state = LOW;
-  gpio_value prev_button2_state;
+  gpio_value prev_button2_state = LOW;
 
   while (1)
   {
-    if (gpio_read(EMERGENCY_BUTTON_PIN, &button2_state) == -1)
-    {
-      perror("gpio_read");
-    }
-
     // 버튼이 눌렸을 때
     // if ( (button2_state == LOW && prev_button2_state == HIGH) || button2_state == HIGH && prev_button2_state == LOW)
-    if (button2_state == HIGH)
+    if (button2_state != prev_button2_state)
     {
-
       // (1) 서버 소켓에 메세지 전달
       int buf = 0;
       if (write(*sock_fd, &buf, 1) == -1)
       {
         perror("[write]");
       }
-
       // 사이렌 작동
       siren_thread_args args =
           {
@@ -141,14 +134,10 @@ void *emergency_signal_thread(void *__sock_fd) // 긴급 차량 버튼이 눌리
         exit(EXIT_FAILURE);
       }
     }
-
     prev_button2_state = button2_state;
-
     usleep(100000); // 100ms 대기
   }
-
   gpio_unexport(EMERGENCY_BUTTON_PIN);
-
   return NULL;
 }
 
