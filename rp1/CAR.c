@@ -29,8 +29,8 @@
 #define MOTOR_ACTUATE_PIN 22 // 모터 작동 버튼
 #define SIREN 0              // GPIO 18, PWM 0번 채널 사용
 
-#define VALUE_MAX 40
-#define DIRECTION_MAX 40
+// #define VALUE_MAX 40
+// #define DIRECTION_MAX 40
 
 void setMotor(int stat)
 {
