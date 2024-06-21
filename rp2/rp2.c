@@ -91,12 +91,12 @@ void* signal_function(void* weatherresult){
       car ((int)(time_D * 1.2));
     }
     else if (weather-> light >= 800){
-      printf("파라솔을 펼치시기 바랍니다 개더우니깐요\n");
+      printf("일조량이 너무 많습니다. 파라솔을 펼쳐 주세요.\n");
       human(time_D);  
       car(time_D);
     }
     else {
-    printf("else\n");
+    printf("default signal\n");
     human(time_D);  
     car(time_D);
     }
